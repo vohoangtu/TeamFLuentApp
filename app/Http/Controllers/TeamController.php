@@ -24,7 +24,7 @@ class TeamController extends Controller
     public function index(): View
     {
         $teams = Team::query()
-            ->with(['lead', 'members.role', 'members.projects'])
+            ->with(['lead.role', 'members.role', 'members.projects'])
             ->withCount('members')
             ->orderBy('name')
             ->get();
@@ -39,7 +39,7 @@ class TeamController extends Controller
      */
     public function create(): View
     {
-        $potentialLeads = Member::query()->where('status', 'active')->orderBy('name')->get();
+        $potentialLeads = Member::query()->with(['role', 'team', 'projects'])->where('status', 'active')->orderBy('name')->get();
 
         return view('teams.create', [
             'potentialLeads' => $potentialLeads,
@@ -62,7 +62,7 @@ class TeamController extends Controller
      */
     public function show(Team $team): View
     {
-        $team->load(['lead', 'members.role', 'members.projects']);
+        $team->load(['lead.role', 'members.role', 'members.projects']);
 
         return view('teams.show', [
             'team' => $team,
@@ -74,7 +74,7 @@ class TeamController extends Controller
      */
     public function edit(Team $team): View
     {
-        $potentialLeads = Member::query()
+        $potentialLeads = Member::query()->with(['role', 'team', 'projects'])
             ->where('team_id', $team->id)
             ->orWhere('id', $team->lead_id)
             ->orderBy('name')

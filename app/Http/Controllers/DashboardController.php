@@ -23,7 +23,7 @@ class DashboardController extends Controller
         $workloadSummary = $this->workloadService->getWorkloadSummary();
 
         $activeProjects = Project::query()
-            ->with(['members.role'])
+            ->with(['members.role', 'members.projects'])
             ->whereIn('status', ['in_progress', 'review', 'planning'])
             ->orderByRaw("CASE priority WHEN 'urgent' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END")
             ->orderByDesc('created_at')
@@ -31,14 +31,10 @@ class DashboardController extends Controller
             ->get();
 
         $roles = Role::query()->withCount('members')->orderBy('id')->get();
-        $teams = Team::query()->with(['lead'])->withCount('members')->orderBy('name')->get();
+        $teams = Team::query()->with(['lead.role'])->withCount('members')->orderBy('name')->get();
 
         $recentAssignments = Member::query()
-            ->with([
-                'projects' => fn ($q) => $q->latest('project_members.created_at')->take(1),
-                'team',
-                'role',
-            ])
+            ->with(['projects', 'team', 'role'])
             ->has('projects')
             ->latest('updated_at')
             ->take(6)

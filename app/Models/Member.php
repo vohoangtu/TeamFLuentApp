@@ -72,7 +72,11 @@ class Member extends Model
      */
     public function getTotalAllocationAttribute(): int
     {
-        return (int) $this->projects->sum('pivot.allocation_percent');
+        if ($this->relationLoaded('projects')) {
+            return (int) $this->projects->sum('pivot.allocation_percent');
+        }
+
+        return (int) $this->projects()->sum('allocation_percent');
     }
 
     /**

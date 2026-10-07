@@ -29,7 +29,7 @@ class ProjectController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Project::query()->with(['members.role', 'members.team']);
+        $query = Project::query()->with(['members.role', 'members.team', 'members.projects']);
 
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
@@ -81,10 +81,10 @@ class ProjectController extends Controller
      */
     public function show(Project $project): View
     {
-        $project->load(['members.role', 'members.team']);
+        $project->load(['members.role', 'members.team', 'members.projects']);
 
         $assignedMemberIds = $project->members->pluck('id')->all();
-        $availableMembers = Member::query()->with(['role', 'team'])
+        $availableMembers = Member::query()->with(['role', 'team', 'projects'])
             ->whereNotIn('id', $assignedMemberIds)
             ->where('status', 'active')
             ->orderBy('name')

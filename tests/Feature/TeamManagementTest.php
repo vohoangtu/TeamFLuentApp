@@ -272,13 +272,35 @@ class TeamManagementTest extends TestCase
             'progress' => 15,
         ]);
 
+        $project2 = Project::create([
+            'name' => 'Project Y',
+            'slug' => 'project-y',
+            'code' => 'PRJ-Y',
+            'status' => ProjectStatus::Planning,
+            'priority' => ProjectPriority::Medium,
+            'progress' => 0,
+        ]);
+
+        $project->members()->attach($member->id, [
+            'role_in_project' => 'Lead Engineer',
+            'allocation_percent' => 50,
+        ]);
+
+        $project2->members()->attach($member->id, [
+            'role_in_project' => 'Consultant',
+            'allocation_percent' => 30,
+        ]);
+
         $this->get(route('members.create'))->assertStatus(200);
         $this->get(route('members.edit', $member))->assertStatus(200);
         $this->get(route('members.show', $member))->assertStatus(200);
 
         $this->get(route('projects.create'))->assertStatus(200);
         $this->get(route('projects.edit', $project))->assertStatus(200);
-        $this->get(route('projects.show', $project))->assertStatus(200);
+        $response = $this->get(route('projects.show', $project))->assertStatus(200);
+        $response->assertSee('Lead Engineer');
+        $response->assertSee('50% Workload');
+        $response->assertSee('Tổng tải: 80%');
 
         $this->get(route('teams.create'))->assertStatus(200);
         $this->get(route('teams.edit', $this->engineeringTeam))->assertStatus(200);
