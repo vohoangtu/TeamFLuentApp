@@ -37,6 +37,7 @@ class RoleController extends Controller
             ->get();
 
         $permissionGroups = PermissionGroup::query()
+            ->with('roles')
             ->withCount('roles')
             ->orderBy('id')
             ->get();
