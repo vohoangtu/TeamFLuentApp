@@ -1,0 +1,148 @@
+<x-layouts.app>
+    <x-slot:title>Tạo Dự Án Mới - TeamNexus</x-slot:title>
+    <x-slot:header>Khởi Tạo Dự Án Mới</x-slot:header>
+
+    <div class="max-w-4xl mx-auto space-y-6">
+        <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            <span>Quay lại danh sách dự án</span>
+        </a>
+
+        <div class="mica-card rounded-3xl p-8 border border-white/15">
+            <div class="mb-6 pb-6 border-b border-white/10">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-gradient-to-r from-fuchsia-500 to-cyan-500"></span>
+                    Thông Tin Dự Án Mới
+                </h2>
+                <p class="text-xs text-slate-400 mt-1">Thiết lập thông số ban đầu, tiến độ dự kiến và ngân sách cho dự án.</p>
+            </div>
+
+            @if($errors->any())
+                <div class="p-4 mb-6 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs space-y-1">
+                    <p class="font-bold">Đã có lỗi xảy ra:</p>
+                    <ul class="list-disc list-inside">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('projects.store') }}" method="POST" class="space-y-6">
+                @csrf
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Tên dự án <span class="text-rose-400">*</span></label>
+                        <input type="text"
+                               name="name"
+                               required
+                               value="{{ old('name') }}"
+                               placeholder="VD: Mobile Cloud Hub v3"
+                               class="w-full px-4 py-2.5 text-xs rounded-xl mica-input">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Mã dự án (Code) <span class="text-rose-400">*</span></label>
+                        <input type="text"
+                               name="code"
+                               required
+                               value="{{ old('code') }}"
+                               placeholder="VD: PRJ-HUB07"
+                               class="w-full px-4 py-2.5 text-xs rounded-xl mica-input uppercase">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Mô tả mục tiêu dự án</label>
+                    <textarea name="description" rows="3" placeholder="Mục tiêu kinh doanh, phạm vi công việc..."
+                              class="w-full px-4 py-2.5 text-xs rounded-xl mica-input">{{ old('description') }}</textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-4 border-t border-white/5">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Trạng thái <span class="text-rose-400">*</span></label>
+                        <select name="status" required class="w-full px-4 py-2.5 text-xs rounded-xl mica-input">
+                            <option value="planning" {{ old('status') == 'planning' ? 'selected' : '' }}>Đang lên kế hoạch</option>
+                            <option value="in_progress" {{ old('status', 'in_progress') == 'in_progress' ? 'selected' : '' }}>Đang triển khai</option>
+                            <option value="review" {{ old('status') == 'review' ? 'selected' : '' }}>Nghiệm thu / Review</option>
+                            <option value="completed" {{ old('status') == 'completed' ? 'selected' : '' }}>Đã hoàn thành</option>
+                            <option value="on_hold" {{ old('status') == 'on_hold' ? 'selected' : '' }}>Tạm hoãn</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Mức độ ưu tiên <span class="text-rose-400">*</span></label>
+                        <select name="priority" required class="w-full px-4 py-2.5 text-xs rounded-xl mica-input">
+                            <option value="urgent" {{ old('priority') == 'urgent' ? 'selected' : '' }}>Khẩn cấp (Urgent)</option>
+                            <option value="high" {{ old('priority', 'high') == 'high' ? 'selected' : '' }}>Ưu tiên cao (High)</option>
+                            <option value="medium" {{ old('priority') == 'medium' ? 'selected' : '' }}>Trung bình (Medium)</option>
+                            <option value="low" {{ old('priority') == 'low' ? 'selected' : '' }}>Thấp (Low)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Tiến độ hiện tại (% 0-100) <span class="text-rose-400">*</span></label>
+                        <input type="number"
+                               name="progress"
+                               min="0"
+                               max="100"
+                               required
+                               value="{{ old('progress', 0) }}"
+                               class="w-full px-4 py-2.5 text-xs rounded-xl mica-input">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-4 border-t border-white/5">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Ngày bắt đầu</label>
+                        <input type="date"
+                               name="start_date"
+                               value="{{ old('start_date', now()->toDateString()) }}"
+                               class="w-full px-4 py-2.5 text-xs rounded-xl mica-input">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Hạn chót (Deadline)</label>
+                        <input type="date"
+                               name="due_date"
+                               value="{{ old('due_date') }}"
+                               class="w-full px-4 py-2.5 text-xs rounded-xl mica-input">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Ngân sách ($ USD)</label>
+                        <input type="number"
+                               step="0.01"
+                               name="budget"
+                               placeholder="50000"
+                               value="{{ old('budget') }}"
+                               class="w-full px-4 py-2.5 text-xs rounded-xl mica-input">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Bảng màu Gradient nhận diện</label>
+                    <select name="color" class="w-full px-4 py-2.5 text-xs rounded-xl mica-input">
+                        <option value="from-purple-500 via-indigo-600 to-cyan-400">Tím Neon & Lam Sáng (Hyper AI)</option>
+                        <option value="from-blue-500 via-cyan-500 to-emerald-400">Xanh Dương & Ngọc Lục (Cloud Nexus)</option>
+                        <option value="from-pink-500 via-rose-500 to-purple-500">Hồng Neon & Hồng Đào (Fluent Mica)</option>
+                        <option value="from-teal-400 via-emerald-500 to-cyan-500">Ngọc Bích & Xanh Biển (Mobile Edge)</option>
+                        <option value="from-amber-500 via-orange-500 to-rose-500">Hổ Phách & Đỏ Lửa (Zero-Trust)</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+                    <a href="{{ route('projects.index') }}" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white mica-pill">
+                        Hủy bỏ
+                    </a>
+                    <button type="submit" class="glow-btn-primary px-6 py-2.5 rounded-xl text-xs font-bold text-white shadow-lg">
+                        Tạo Dự Án Mới
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</x-layouts.app>
