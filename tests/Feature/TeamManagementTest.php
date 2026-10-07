@@ -252,4 +252,36 @@ class TeamManagementTest extends TestCase
         $this->get(route('teams.index'))->assertStatus(200);
         $this->get(route('roles.index'))->assertStatus(200);
     }
+
+    public function test_all_create_edit_and_show_pages_render_successfully(): void
+    {
+        $member = Member::create([
+            'name' => 'Vũ Thị F',
+            'email' => 'f.vu@test.internal',
+            'team_id' => $this->engineeringTeam->id,
+            'role_id' => $this->developerRole->id,
+            'status' => MemberStatus::Active,
+        ]);
+
+        $project = Project::create([
+            'name' => 'Project X',
+            'slug' => 'project-x',
+            'code' => 'PRJ-X',
+            'status' => ProjectStatus::InProgress,
+            'priority' => ProjectPriority::High,
+            'progress' => 15,
+        ]);
+
+        $this->get(route('members.create'))->assertStatus(200);
+        $this->get(route('members.edit', $member))->assertStatus(200);
+        $this->get(route('members.show', $member))->assertStatus(200);
+
+        $this->get(route('projects.create'))->assertStatus(200);
+        $this->get(route('projects.edit', $project))->assertStatus(200);
+        $this->get(route('projects.show', $project))->assertStatus(200);
+
+        $this->get(route('teams.create'))->assertStatus(200);
+        $this->get(route('teams.edit', $this->engineeringTeam))->assertStatus(200);
+        $this->get(route('teams.show', $this->engineeringTeam))->assertStatus(200);
+    }
 }

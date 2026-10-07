@@ -23,15 +23,15 @@ enum ProjectPriority: string
     }
 
     /**
-     * Fluent 2 badge CSS classes.
+     * Fluent 2 badge CSS classes (Light Theme Ultra-Colorful).
      */
     public function badgeClass(): string
     {
         return match ($this) {
-            self::Urgent => 'bg-rose-500/20 text-rose-300 border-rose-500/40 shadow-[0_0_10px_rgba(244,63,94,0.3)]',
-            self::High => 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.25)]',
-            self::Medium => 'bg-blue-500/20 text-blue-300 border-blue-500/40',
-            self::Low => 'bg-slate-500/20 text-slate-300 border-slate-500/30',
+            self::Urgent => 'bg-rose-50 text-rose-800 border-rose-300 shadow-[0_2px_8px_rgba(244,63,94,0.15)] font-semibold',
+            self::High => 'bg-amber-50 text-amber-800 border-amber-300 shadow-[0_2px_8px_rgba(245,158,11,0.15)] font-semibold',
+            self::Medium => 'bg-blue-50 text-blue-800 border-blue-300 shadow-[0_2px_8px_rgba(59,130,246,0.15)] font-semibold',
+            self::Low => 'bg-slate-100 text-slate-700 border-slate-300 font-semibold',
         };
     }
 }

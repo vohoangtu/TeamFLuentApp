@@ -21,14 +21,14 @@ enum MemberStatus: string
     }
 
     /**
-     * Fluent 2 badge CSS classes.
+     * Fluent 2 badge CSS classes (Light Theme Ultra-Colorful).
      */
     public function badgeClass(): string
     {
         return match ($this) {
-            self::Active => 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.25)]',
-            self::OnLeave => 'bg-amber-500/15 text-amber-300 border-amber-500/30 shadow-[0_0_8px_rgba(245,158,11,0.2)]',
-            self::Inactive => 'bg-slate-500/15 text-slate-400 border-slate-500/30',
+            self::Active => 'bg-emerald-50 text-emerald-800 border-emerald-300 shadow-[0_2px_8px_rgba(16,185,129,0.15)] font-semibold',
+            self::OnLeave => 'bg-amber-50 text-amber-800 border-amber-300 shadow-[0_2px_8px_rgba(245,158,11,0.15)] font-semibold',
+            self::Inactive => 'bg-slate-100 text-slate-600 border-slate-300 font-semibold',
         };
     }
 
@@ -38,8 +38,8 @@ enum MemberStatus: string
     public function dotClass(): string
     {
         return match ($this) {
-            self::Active => 'bg-emerald-400',
-            self::OnLeave => 'bg-amber-400',
+            self::Active => 'bg-emerald-500',
+            self::OnLeave => 'bg-amber-500',
             self::Inactive => 'bg-slate-400',
         };
     }

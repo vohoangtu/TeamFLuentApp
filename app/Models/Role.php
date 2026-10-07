@@ -40,19 +40,19 @@ class Role extends Model
     }
 
     /**
-     * Get Fluent 2 color styling classes for this role.
+     * Get Fluent 2 color styling classes for this role (Light Theme Ultra-Colorful).
      */
     public function getBadgeClassesAttribute(): string
     {
         return match ($this->badge_color) {
-            'purple' => 'bg-purple-500/15 text-purple-300 border-purple-500/30 shadow-[0_0_12px_rgba(168,85,247,0.25)]',
-            'cyan' => 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30 shadow-[0_0_12px_rgba(6,182,212,0.25)]',
-            'emerald' => 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.25)]',
-            'rose' => 'bg-rose-500/15 text-rose-300 border-rose-500/30 shadow-[0_0_12px_rgba(244,63,94,0.25)]',
-            'amber' => 'bg-amber-500/15 text-amber-300 border-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.25)]',
-            'blue' => 'bg-blue-500/15 text-blue-300 border-blue-500/30 shadow-[0_0_12px_rgba(59,130,246,0.25)]',
-            'fuchsia' => 'bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30 shadow-[0_0_12px_rgba(217,70,239,0.25)]',
-            default => 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30 shadow-[0_0_12px_rgba(99,102,241,0.25)]',
+            'purple' => 'bg-purple-100/90 text-purple-700 border-purple-300 shadow-[0_2px_8px_rgba(168,85,247,0.15)] font-semibold',
+            'cyan' => 'bg-cyan-100/90 text-cyan-800 border-cyan-300 shadow-[0_2px_8px_rgba(6,182,212,0.15)] font-semibold',
+            'emerald' => 'bg-emerald-100/90 text-emerald-800 border-emerald-300 shadow-[0_2px_8px_rgba(16,185,129,0.15)] font-semibold',
+            'rose' => 'bg-rose-100/90 text-rose-800 border-rose-300 shadow-[0_2px_8px_rgba(244,63,94,0.15)] font-semibold',
+            'amber' => 'bg-amber-100/90 text-amber-800 border-amber-300 shadow-[0_2px_8px_rgba(245,158,11,0.15)] font-semibold',
+            'blue' => 'bg-blue-100/90 text-blue-800 border-blue-300 shadow-[0_2px_8px_rgba(59,130,246,0.15)] font-semibold',
+            'fuchsia' => 'bg-fuchsia-100/90 text-fuchsia-800 border-fuchsia-300 shadow-[0_2px_8px_rgba(217,70,239,0.15)] font-semibold',
+            default => 'bg-indigo-100/90 text-indigo-700 border-indigo-300 shadow-[0_2px_8px_rgba(99,102,241,0.15)] font-semibold',
         };
     }
 }

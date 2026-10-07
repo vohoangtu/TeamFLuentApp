@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Enterprise strict mode: catches N+1 queries, unfillable attributes, and missing attributes early
-        Model::shouldBeStrict(! $this->app->isProduction());
+        Model::shouldBeStrict(true);
 
         // Enterprise Event & Audit logging wiring
         Event::listen(MemberAssignedToProject::class, [LogProjectAssignmentActivity::class, 'handleAssignment']);

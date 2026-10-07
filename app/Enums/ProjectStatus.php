@@ -25,16 +25,16 @@ enum ProjectStatus: string
     }
 
     /**
-     * Fluent 2 badge CSS classes.
+     * Fluent 2 badge CSS classes (Light Theme Ultra-Colorful).
      */
     public function badgeClass(): string
     {
         return match ($this) {
-            self::Planning => 'bg-sky-500/15 text-sky-300 border-sky-500/30 shadow-[0_0_10px_rgba(14,165,233,0.2)]',
-            self::InProgress => 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.2)]',
-            self::Review => 'bg-amber-500/15 text-amber-300 border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.2)]',
-            self::Completed => 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30 shadow-[0_0_10px_rgba(99,102,241,0.2)]',
-            self::OnHold => 'bg-rose-500/15 text-rose-300 border-rose-500/30 shadow-[0_0_10px_rgba(244,63,94,0.2)]',
+            self::Planning => 'bg-sky-50 text-sky-700 border-sky-300 shadow-[0_2px_8px_rgba(14,165,233,0.12)] font-semibold',
+            self::InProgress => 'bg-emerald-50 text-emerald-800 border-emerald-300 shadow-[0_2px_8px_rgba(16,185,129,0.12)] font-semibold',
+            self::Review => 'bg-amber-50 text-amber-800 border-amber-300 shadow-[0_2px_8px_rgba(245,158,11,0.12)] font-semibold',
+            self::Completed => 'bg-indigo-50 text-indigo-700 border-indigo-300 shadow-[0_2px_8px_rgba(99,102,241,0.12)] font-semibold',
+            self::OnHold => 'bg-rose-50 text-rose-800 border-rose-300 shadow-[0_2px_8px_rgba(244,63,94,0.12)] font-semibold',
         };
     }
 
@@ -44,11 +44,11 @@ enum ProjectStatus: string
     public function dotClass(): string
     {
         return match ($this) {
-            self::Planning => 'bg-sky-400',
-            self::InProgress => 'bg-emerald-400 animate-pulse',
-            self::Review => 'bg-amber-400',
-            self::Completed => 'bg-indigo-400',
-            self::OnHold => 'bg-rose-400',
+            self::Planning => 'bg-sky-500',
+            self::InProgress => 'bg-emerald-500 animate-pulse',
+            self::Review => 'bg-amber-500',
+            self::Completed => 'bg-indigo-500',
+            self::OnHold => 'bg-rose-500',
         };
     }
 }
