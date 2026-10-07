@@ -24,8 +24,9 @@ Route::delete('projects/{project}/members/{member}', [ProjectController::class, 
 // Team Management
 Route::resource('teams', TeamController::class);
 
-// Role Management
-Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
+// Role Management & RBAC Permissions Matrix
+Route::post('roles/matrix', [RoleController::class, 'updateMatrix'])->name('roles.matrix.update');
+Route::resource('roles', RoleController::class);
 
 // Theme & Blade Component Showcase
 Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');

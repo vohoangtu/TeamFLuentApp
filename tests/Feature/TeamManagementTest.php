@@ -311,5 +311,138 @@ class TeamManagementTest extends TestCase
         $this->get(route('teams.create'))->assertStatus(200);
         $this->get(route('teams.edit', $this->engineeringTeam))->assertStatus(200);
         $this->get(route('teams.show', $this->engineeringTeam))->assertStatus(200);
+
+        $this->get(route('roles.create'))->assertStatus(200);
+        $this->get(route('roles.edit', $this->developerRole))->assertStatus(200);
+    }
+
+    public function test_can_create_new_role_with_permissions(): void
+    {
+        $response = $this->post(route('roles.store'), [
+            'name' => 'Security Analyst',
+            'slug' => 'security-analyst',
+            'badge_color' => 'cyan',
+            'description' => 'Chuyên gia bảo mật và đánh giá tuân thủ quy trình.',
+            'permissions' => ['projects.view', 'system.logs', 'reports.export'],
+        ]);
+
+        $response->assertRedirect(route('roles.index'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('roles', [
+            'name' => 'Security Analyst',
+            'slug' => 'security-analyst',
+            'badge_color' => 'cyan',
+        ]);
+
+        $role = Role::where('slug', 'security-analyst')->firstOrFail();
+        $this->assertContains('projects.view', $role->permissions);
+        $this->assertContains('system.logs', $role->permissions);
+        $this->assertContains('reports.export', $role->permissions);
+    }
+
+    public function test_can_update_existing_role(): void
+    {
+        $role = Role::create([
+            'name' => 'Scrum Master',
+            'slug' => 'scrum-master',
+            'badge_color' => 'amber',
+            'description' => 'Quản trị quy trình Agile.',
+            'permissions' => ['projects.view'],
+        ]);
+
+        $response = $this->put(route('roles.update', $role), [
+            'name' => 'Agile Coach & Scrum Master',
+            'slug' => 'agile-coach-scrum-master',
+            'badge_color' => 'fuchsia',
+            'description' => 'Huấn luyện agile toàn diện.',
+            'permissions' => ['projects.view', 'projects.edit', 'members.view'],
+        ]);
+
+        $response->assertRedirect(route('roles.index'));
+        $response->assertSessionHas('success');
+
+        $role->refresh();
+        $this->assertSame('Agile Coach & Scrum Master', $role->name);
+        $this->assertSame('agile-coach-scrum-master', $role->slug);
+        $this->assertSame('fuchsia', $role->badge_color);
+        $this->assertContains('projects.edit', $role->permissions);
+    }
+
+    public function test_can_batch_update_rbac_matrix_permissions(): void
+    {
+        $roleA = Role::create([
+            'name' => 'Role A',
+            'slug' => 'role-a',
+            'badge_color' => 'blue',
+            'permissions' => ['projects.view'],
+        ]);
+
+        $roleB = Role::create([
+            'name' => 'Role B',
+            'slug' => 'role-b',
+            'badge_color' => 'rose',
+            'permissions' => ['teams.view'],
+        ]);
+
+        $matrixPayload = [
+            'matrix' => [
+                $roleA->id => ['projects.view', 'projects.create', 'projects.edit'],
+                $roleB->id => ['teams.view', 'teams.create', 'system.settings'],
+            ],
+        ];
+
+        $response = $this->post(route('roles.matrix.update'), $matrixPayload);
+
+        $response->assertRedirect(route('roles.index'));
+        $response->assertSessionHas('success');
+
+        $roleA->refresh();
+        $roleB->refresh();
+
+        $this->assertEquals(['projects.view', 'projects.create', 'projects.edit'], $roleA->permissions);
+        $this->assertEquals(['teams.view', 'teams.create', 'system.settings'], $roleB->permissions);
+    }
+
+    public function test_can_delete_unassigned_role(): void
+    {
+        $role = Role::create([
+            'name' => 'Temporary Contractor',
+            'slug' => 'temp-contractor',
+            'badge_color' => 'indigo',
+            'permissions' => ['projects.view'],
+        ]);
+
+        $response = $this->delete(route('roles.destroy', $role));
+
+        $response->assertRedirect(route('roles.index'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('roles', ['id' => $role->id]);
+    }
+
+    public function test_cannot_delete_role_with_assigned_members(): void
+    {
+        $role = Role::create([
+            'name' => 'DevOps Specialist',
+            'slug' => 'devops-specialist',
+            'badge_color' => 'purple',
+            'permissions' => ['system.settings'],
+        ]);
+
+        Member::create([
+            'name' => 'Đặng Văn Lâm',
+            'email' => 'lam.dang@test.internal',
+            'team_id' => $this->engineeringTeam->id,
+            'role_id' => $role->id,
+            'status' => MemberStatus::Active,
+        ]);
+
+        $response = $this->delete(route('roles.destroy', $role));
+
+        $response->assertRedirect(route('roles.index'));
+        $response->assertSessionHas('error');
+
+        $this->assertDatabaseHas('roles', ['id' => $role->id]);
     }
 }
