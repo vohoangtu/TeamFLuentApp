@@ -9,6 +9,7 @@ use App\Actions\UpdateRoleAction;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateMatrixRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use App\Models\PermissionGroup;
 use App\Models\Role;
 use App\Services\PermissionRegistry;
 use Illuminate\Contracts\View\View;
@@ -30,8 +31,13 @@ class RoleController extends Controller
     public function index(): View
     {
         $roles = Role::query()
-            ->with(['members.team', 'members.projects'])
+            ->with(['members.team', 'members.projects', 'permissionGroups'])
             ->withCount('members')
+            ->orderBy('id')
+            ->get();
+
+        $permissionGroups = PermissionGroup::query()
+            ->withCount('roles')
             ->orderBy('id')
             ->get();
 
@@ -39,6 +45,7 @@ class RoleController extends Controller
 
         return view('roles.index', [
             'roles' => $roles,
+            'permissionGroups' => $permissionGroups,
             'permissionModules' => $permissionModules,
         ]);
     }
@@ -50,6 +57,7 @@ class RoleController extends Controller
     {
         return view('roles.create', [
             'permissionModules' => PermissionRegistry::all(),
+            'permissionGroups' => PermissionGroup::orderBy('id')->get(),
             'colors' => $this->availableColors(),
         ]);
     }
@@ -70,9 +78,12 @@ class RoleController extends Controller
      */
     public function edit(Role $role): View
     {
+        $role->load('permissionGroups');
+
         return view('roles.edit', [
             'role' => $role,
             'permissionModules' => PermissionRegistry::all(),
+            'permissionGroups' => PermissionGroup::orderBy('id')->get(),
             'colors' => $this->availableColors(),
         ]);
     }
@@ -111,7 +122,8 @@ class RoleController extends Controller
     public function updateMatrix(UpdateMatrixRequest $request): RedirectResponse
     {
         $matrix = (array) $request->validated('matrix', []);
-        $this->updateMatrixAction->handle($matrix);
+        $matrixGroups = (array) $request->validated('matrix_groups', []);
+        $this->updateMatrixAction->handle($matrix, $matrixGroups);
 
         return redirect()->route('roles.index')
             ->with('success', 'Đã lưu và cập nhật ma trận phân quyền RBAC thành công!');

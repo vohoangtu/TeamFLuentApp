@@ -10,6 +10,7 @@ use App\Enums\ProjectStatus;
 use App\Events\MemberAssignedToProject;
 use App\Events\MemberWorkloadExceeded;
 use App\Models\Member;
+use App\Models\PermissionGroup;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
@@ -444,5 +445,196 @@ class TeamManagementTest extends TestCase
         $response->assertSessionHas('error');
 
         $this->assertDatabaseHas('roles', ['id' => $role->id]);
+    }
+
+    public function test_permission_group_pages_render_successfully(): void
+    {
+        $group = PermissionGroup::create([
+            'name' => 'Nhóm Kiểm Thử',
+            'slug' => 'nhom-kiem-thu',
+            'badge_color' => 'amber',
+            'icon' => '🛡️',
+            'description' => 'Mô tả',
+            'permissions' => ['projects.view', 'reports.view'],
+            'is_system' => false,
+        ]);
+
+        $this->get(route('permission-groups.create'))->assertStatus(200);
+        $this->get(route('permission-groups.edit', $group))->assertStatus(200);
+    }
+
+    public function test_can_create_functional_permission_group(): void
+    {
+        $response = $this->post(route('permission-groups.store'), [
+            'name' => 'Nhóm DevOps & Hạ Tầng',
+            'slug' => 'devops-infra',
+            'badge_color' => 'purple',
+            'icon' => '⚙️',
+            'description' => 'Quản trị CI/CD và hạ tầng đám mây.',
+            'permissions' => ['system.settings', 'system.logs', 'projects.view'],
+        ]);
+
+        $response->assertRedirect(route('roles.index', ['tab' => 'groups']));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('permission_groups', [
+            'name' => 'Nhóm DevOps & Hạ Tầng',
+            'slug' => 'devops-infra',
+            'badge_color' => 'purple',
+        ]);
+
+        $group = PermissionGroup::where('slug', 'devops-infra')->firstOrFail();
+        $this->assertContains('system.settings', $group->permissions);
+        $this->assertContains('projects.view', $group->permissions);
+    }
+
+    public function test_can_update_functional_permission_group_and_sync_roles(): void
+    {
+        $group = PermissionGroup::create([
+            'name' => 'Nhóm Front-End',
+            'slug' => 'frontend-suite',
+            'badge_color' => 'cyan',
+            'icon' => '💻',
+            'permissions' => ['projects.view'],
+            'is_system' => false,
+        ]);
+
+        $role = Role::create([
+            'name' => 'UI Developer',
+            'slug' => 'ui-dev',
+            'badge_color' => 'cyan',
+            'permissions' => ['projects.view'],
+        ]);
+        $role->permissionGroups()->attach($group->id);
+
+        $response = $this->put(route('permission-groups.update', $group), [
+            'name' => 'Nhóm Frontend & UI Suite',
+            'slug' => 'frontend-ui-suite',
+            'badge_color' => 'cyan',
+            'icon' => '🎨',
+            'description' => 'Chuyên phát triển giao diện.',
+            'permissions' => ['projects.view', 'projects.edit', 'members.view'],
+        ]);
+
+        $response->assertRedirect(route('roles.index', ['tab' => 'groups']));
+        $response->assertSessionHas('success');
+
+        $role->refresh();
+        $this->assertContains('projects.edit', $role->permissions);
+        $this->assertContains('members.view', $role->permissions);
+    }
+
+    public function test_cannot_delete_system_permission_group(): void
+    {
+        $systemGroup = PermissionGroup::create([
+            'name' => 'Nhóm System Cốt Lõi',
+            'slug' => 'system-core',
+            'badge_color' => 'purple',
+            'permissions' => ['system.settings'],
+            'is_system' => true,
+        ]);
+
+        $response = $this->delete(route('permission-groups.destroy', $systemGroup));
+
+        $response->assertRedirect(route('roles.index', ['tab' => 'groups']));
+        $response->assertSessionHas('error');
+
+        $this->assertDatabaseHas('permission_groups', ['id' => $systemGroup->id]);
+    }
+
+    public function test_can_delete_custom_permission_group(): void
+    {
+        $customGroup = PermissionGroup::create([
+            'name' => 'Nhóm Thử Nghiệm',
+            'slug' => 'test-group',
+            'badge_color' => 'indigo',
+            'permissions' => ['projects.view'],
+            'is_system' => false,
+        ]);
+
+        $response = $this->delete(route('permission-groups.destroy', $customGroup));
+
+        $response->assertRedirect(route('roles.index', ['tab' => 'groups']));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('permission_groups', ['id' => $customGroup->id]);
+    }
+
+    public function test_can_assign_permission_groups_when_creating_role(): void
+    {
+        $groupDev = PermissionGroup::create([
+            'name' => 'Nhóm Dev',
+            'slug' => 'group-dev',
+            'badge_color' => 'cyan',
+            'permissions' => ['projects.view', 'projects.edit'],
+            'is_system' => false,
+        ]);
+
+        $groupSystem = PermissionGroup::create([
+            'name' => 'Nhóm System',
+            'slug' => 'group-system',
+            'badge_color' => 'purple',
+            'permissions' => ['system.settings', 'system.logs'],
+            'is_system' => false,
+        ]);
+
+        $response = $this->post(route('roles.store'), [
+            'name' => 'Fullstack Tech Lead',
+            'slug' => 'fullstack-tech-lead',
+            'badge_color' => 'purple',
+            'description' => 'Phụ trách cả dev và system.',
+            'permission_group_ids' => [$groupDev->id, $groupSystem->id],
+            'permissions' => ['reports.view'], // custom additional permission
+        ]);
+
+        $response->assertRedirect(route('roles.index'));
+        $response->assertSessionHas('success');
+
+        $role = Role::where('slug', 'fullstack-tech-lead')->firstOrFail();
+        $this->assertTrue($role->hasPermissionGroup($groupDev->id));
+        $this->assertTrue($role->hasPermissionGroup($groupSystem->id));
+
+        // Compiled effective permissions include both groups + custom permission
+        $this->assertContains('projects.view', $role->permissions);
+        $this->assertContains('projects.edit', $role->permissions);
+        $this->assertContains('system.settings', $role->permissions);
+        $this->assertContains('system.logs', $role->permissions);
+        $this->assertContains('reports.view', $role->permissions);
+    }
+
+    public function test_can_batch_update_matrix_with_functional_groups(): void
+    {
+        $groupDev = PermissionGroup::create([
+            'name' => 'Nhóm Dev Matrix',
+            'slug' => 'dev-matrix',
+            'badge_color' => 'cyan',
+            'permissions' => ['projects.view', 'projects.edit'],
+            'is_system' => false,
+        ]);
+
+        $role = Role::create([
+            'name' => 'Junior Dev',
+            'slug' => 'junior-dev',
+            'badge_color' => 'emerald',
+            'permissions' => [],
+        ]);
+
+        $response = $this->post(route('roles.matrix.update'), [
+            'matrix_groups' => [
+                $role->id => [$groupDev->id],
+            ],
+            'matrix' => [
+                $role->id => ['members.view'],
+            ],
+        ]);
+
+        $response->assertRedirect(route('roles.index'));
+        $response->assertSessionHas('success');
+
+        $role->refresh();
+        $this->assertTrue($role->hasPermissionGroup($groupDev->id));
+        $this->assertContains('projects.view', $role->permissions);
+        $this->assertContains('projects.edit', $role->permissions);
+        $this->assertContains('members.view', $role->permissions);
     }
 }

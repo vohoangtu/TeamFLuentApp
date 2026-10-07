@@ -534,5 +534,7 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+
+        $this->call(PermissionGroupSeeder::class);
     }
 }

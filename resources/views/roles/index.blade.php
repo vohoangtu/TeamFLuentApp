@@ -1,9 +1,9 @@
 <x-layouts.app>
     <x-slot:title>Quản Lý Vai Trò & Ma Trận Phân Quyền - TeamNexus</x-slot:title>
-    <x-slot:header>Quản Lý Vai Trò & Ma Trận Phân Quyền (RBAC)</x-slot:header>
+    <x-slot:header>Quản Lý Vai Trò, Nhóm Quyền Chức Năng & Ma Trận RBAC</x-slot:header>
 
     <div class="space-y-6" x-data="{
-        activeTab: 'matrix', // 'matrix' or 'roles'
+        activeTab: '{{ request('tab', 'matrix') }}', // 'matrix', 'groups', or 'roles'
         searchTerm: '',
         matchesSearch(name, desc) {
             if (!this.searchTerm) return true;
@@ -15,15 +15,23 @@
         <x-card padding="default" class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2 mb-1">
-                    <h2 class="text-lg font-bold text-slate-900">Kiến Trúc Phân Quyền Vai Trò & Ma Trận RBAC</h2>
+                    <h2 class="text-lg font-bold text-slate-900">Kiến Trúc Phân Quyền Vai Trò & Nhóm Chức Năng</h2>
                     <x-badge color="primary" size="sm">{{ $roles->count() }} vai trò</x-badge>
+                    <x-badge color="cyan" size="sm">{{ $permissionGroups->count() }} nhóm chức năng</x-badge>
                 </div>
                 <p class="text-xs text-slate-500 font-medium">
-                    Thiết lập phân quyền chi tiết theo từng module hệ thống và quản trị các vị trí chức năng trong tổ chức.
+                    Gán quyền theo nhóm chức năng (nhóm Dev, nhóm System...) hoặc thiết lập ma trận phân quyền chi tiết.
                 </p>
             </div>
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2.5 flex-wrap">
+                <x-button variant="secondary" size="md" href="{{ route('permission-groups.create') }}">
+                    <svg class="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span>Thêm nhóm chức năng</span>
+                </x-button>
+
                 <x-button variant="primary" size="md" href="{{ route('roles.create') }}">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
@@ -33,7 +41,7 @@
             </div>
         </x-card>
 
-        <!-- Navigation Tabs: Matrix Grid vs Role Directory -->
+        <!-- Navigation Tabs: Matrix Grid vs Permission Groups vs Role Directory -->
         <div class="flex items-center justify-between border-b border-slate-200/80 pb-1 gap-4 flex-wrap">
             <div class="flex items-center gap-2">
                 <button type="button"
@@ -44,6 +52,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                     </svg>
                     <span>Ma Trận Phân Quyền (RBAC Grid)</span>
+                </button>
+
+                <button type="button"
+                        @click="activeTab = 'groups'"
+                        class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2"
+                        :class="activeTab === 'groups' ? 'glow-btn-primary shadow-sm text-white' : 'mica-pill text-slate-600 hover:text-slate-900'">
+                    <span class="text-sm">📦</span>
+                    <span>Nhóm Quyền Chức Năng ({{ $permissionGroups->count() }})</span>
                 </button>
 
                 <button type="button"
@@ -78,7 +94,9 @@
                     <div class="p-4 border-b border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
                             <span class="text-xs font-bold text-slate-800">Bảng Đối Chiếu Ma Trận 2 Chiều</span>
-                            <p class="text-[11px] text-slate-500">Tích chọn các quyền được phép thực thi cho từng vai trò và bấm Lưu thay đổi.</p>
+                            <p class="text-[11px] text-slate-500">
+                                Tích chọn gán cả Nhóm chức năng (Dev, System...) hoặc tinh chỉnh từng quyền hạn chi tiết và bấm Lưu.
+                            </p>
                         </div>
 
                         <div class="flex items-center gap-3">
@@ -98,10 +116,10 @@
                             <thead>
                                 <tr class="border-b border-slate-200 bg-slate-100/70">
                                     <th class="p-4 min-w-[280px] sticky left-0 z-20 bg-slate-100/95 backdrop-blur-md font-bold text-slate-800">
-                                        Quyền Hạn / Chức Năng Hệ Thống
+                                        Nhóm Chức Năng & Quyền Hạn
                                     </th>
                                     @foreach($roles as $role)
-                                        <th class="p-4 text-center min-w-[150px] align-top">
+                                        <th class="p-4 text-center min-w-[160px] align-top">
                                             <div class="flex flex-col items-center gap-1.5">
                                                 <span class="px-2.5 py-1 rounded-xl text-[11px] font-bold border {{ $role->badge_classes }}">
                                                     {{ $role->name }}
@@ -118,8 +136,72 @@
                                 </tr>
                             </thead>
 
-                            <!-- Table Body: Modules & Granular Permissions -->
+                            <!-- Table Body: Functional Groups and Modules -->
                             <tbody class="divide-y divide-slate-200/70">
+                                <!-- ==================================================== -->
+                                <!-- 1. FUNCTIONAL PERMISSION GROUPS (NHÓM CHỨC NĂNG)      -->
+                                <!-- ==================================================== -->
+                                <tr class="bg-gradient-to-r from-cyan-50/90 to-blue-50/90 border-t-2 border-cyan-300 font-bold">
+                                    <td colspan="{{ 1 + $roles->count() }}" class="px-4 py-3.5 text-slate-900">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-lg">📦</span>
+                                                <span class="text-sm font-extrabold uppercase tracking-wide text-cyan-900">
+                                                    Gán Phân Quyền Theo Nhóm Chức Năng (Functional Permission Groups)
+                                                </span>
+                                                <span class="text-[11px] font-normal text-cyan-700">({{ $permissionGroups->count() }} nhóm chức năng)</span>
+                                            </div>
+                                            <span class="text-[11px] font-medium text-cyan-700">
+                                                Tích chọn để gán toàn bộ nhóm quyền cho vai trò
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                @foreach($permissionGroups as $pGroup)
+                                    <tr class="bg-cyan-50/20 hover:bg-cyan-50/40 border-b border-cyan-100 transition-colors">
+                                        <td class="p-4 sticky left-0 z-10 bg-white/95 backdrop-blur-md border-r border-slate-100">
+                                            <div class="space-y-1">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-base">{{ $pGroup->icon }}</span>
+                                                    <span class="font-bold text-slate-900 text-xs">{{ $pGroup->name }}</span>
+                                                    <x-badge :color="$pGroup->badge_color" size="sm">{{ count($pGroup->permissions ?? []) }} quyền</x-badge>
+                                                </div>
+                                                <p class="text-[11px] text-slate-500">{{ $pGroup->description }}</p>
+                                                <div class="flex flex-wrap gap-1">
+                                                    @foreach(array_slice($pGroup->permissions ?? [], 0, 3) as $k)
+                                                        <code class="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">{{ $k }}</code>
+                                                    @endforeach
+                                                    @if(count($pGroup->permissions ?? []) > 3)
+                                                        <span class="text-[9px] text-slate-400 font-medium">+{{ count($pGroup->permissions) - 3 }} nữa</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        @foreach($roles as $role)
+                                            @php
+                                                $isGroupAssigned = $role->hasPermissionGroup($pGroup->id);
+                                            @endphp
+                                            <td class="p-4 text-center align-middle bg-cyan-50/10">
+                                                <label class="inline-flex flex-col items-center justify-center p-2 rounded-xl cursor-pointer hover:bg-cyan-100/60 transition-colors">
+                                                    <input type="checkbox"
+                                                           name="matrix_groups[{{ $role->id }}][]"
+                                                           value="{{ $pGroup->id }}"
+                                                           {{ $isGroupAssigned ? 'checked' : '' }}
+                                                           class="w-5 h-5 rounded-lg text-cyan-600 bg-white border-slate-300 focus:ring-cyan-500 cursor-pointer">
+                                                    <span class="text-[9px] font-semibold mt-1 text-slate-500">
+                                                        {{ $isGroupAssigned ? 'Đã gán' : 'Chưa gán' }}
+                                                    </span>
+                                                </label>
+                                            </td>
+                                        @endforeach
+                                    </tr>
+                                @endforeach
+
+                                <!-- ==================================================== -->
+                                <!-- 2. GRANULAR PERMISSIONS BY MODULE                    -->
+                                <!-- ==================================================== -->
                                 @foreach($permissionModules as $moduleKey => $module)
                                     <!-- Module Group Header Row -->
                                     <tr class="bg-indigo-50/40 border-t-2 border-indigo-200/60 font-bold">
@@ -219,7 +301,107 @@
         </div>
 
         <!-- ===================================================================== -->
-        <!-- TAB 2: ROLES DIRECTORY (LIST & MANAGEMENT)                            -->
+        <!-- TAB 2: FUNCTIONAL PERMISSION GROUPS DIRECTORY                         -->
+        <!-- ===================================================================== -->
+        <div x-show="activeTab === 'groups'" class="space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Danh Mục Nhóm Quyền Chức Năng (Permission Groups)</h3>
+                    <p class="text-xs text-slate-500">Các gói quyền chức năng được phân loại logic (Nhóm Dev, Nhóm System, Nhóm Quản Trị...).</p>
+                </div>
+                <x-button variant="primary" size="sm" href="{{ route('permission-groups.create') }}">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span>Thêm nhóm chức năng</span>
+                </x-button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($permissionGroups as $group)
+                    <x-card padding="default" class="flex flex-col justify-between hover:border-cyan-300 transition-all shadow-md">
+                        <div>
+                            <div class="flex items-start justify-between gap-3 mb-3">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="text-2xl">{{ $group->icon }}</span>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-slate-900">{{ $group->name }}</h4>
+                                        <span class="font-mono text-[10px] text-slate-400">#{{ $group->slug }}</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-1">
+                                    <x-badge :color="$group->badge_color" size="sm">
+                                        {{ count($group->permissions ?? []) }} quyền
+                                    </x-badge>
+                                    @if($group->is_system)
+                                        <span class="text-[9px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                                            Hệ thống
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-slate-600 mb-4 leading-relaxed">
+                                {{ $group->description }}
+                            </p>
+
+                            <!-- Assigned Roles -->
+                            <div class="pt-3 border-t border-slate-100 space-y-2">
+                                <div class="flex items-center justify-between text-[11px]">
+                                    <span class="font-bold text-slate-500">Vai trò đang sử dụng:</span>
+                                    <span class="font-bold text-cyan-700">{{ $group->roles_count }} vai trò</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1.5">
+                                    @forelse($group->roles as $r)
+                                        <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold border {{ $r->badge_classes }}">
+                                            {{ $r->name }}
+                                        </span>
+                                    @empty
+                                        <span class="text-[11px] text-slate-400 italic">Chưa gán cho vai trò nào</span>
+                                    @endforelse
+                                </div>
+                            </div>
+
+                            <!-- Permissions Preview -->
+                            <div class="mt-3 pt-3 border-t border-slate-100 space-y-1.5">
+                                <span class="text-[11px] font-bold text-slate-500 block">Quyền trong nhóm này:</span>
+                                <div class="flex flex-wrap gap-1 max-h-24 overflow-y-auto pr-1">
+                                    @foreach($group->permissions ?? [] as $perm)
+                                        <code class="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 font-mono">
+                                            {{ $perm }}
+                                        </code>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Action Buttons -->
+                        <div class="mt-6 pt-3.5 border-t border-slate-100 flex items-center justify-end gap-2">
+                            <x-button variant="secondary" size="sm" href="{{ route('permission-groups.edit', $group) }}">
+                                <svg class="w-3.5 h-3.5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                </svg>
+                                <span>Điều chỉnh</span>
+                            </x-button>
+
+                            @if(!$group->is_system)
+                                <form action="{{ route('permission-groups.destroy', $group) }}" method="POST"
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhóm quyền {{ $group->name }}?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <x-button variant="danger" size="sm" type="submit">
+                                        Xóa
+                                    </x-button>
+                                </form>
+                            @endif
+                        </div>
+                    </x-card>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- ===================================================================== -->
+        <!-- TAB 3: ROLES DIRECTORY (LIST & MANAGEMENT)                            -->
         <!-- ===================================================================== -->
         <div x-show="activeTab === 'roles'" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -242,20 +424,39 @@
                                 {{ $role->description }}
                             </p>
 
+                            <!-- Functional Groups Assigned to this Role -->
+                            <div class="space-y-1.5 pt-3 border-t border-slate-100">
+                                <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                                    Nhóm chức năng sở hữu:
+                                </span>
+                                <div class="flex flex-wrap gap-1.5">
+                                    @forelse($role->permissionGroups as $grp)
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-semibold bg-cyan-50 text-cyan-800 border border-cyan-200">
+                                            <span>{{ $grp->icon }}</span>
+                                            <span>{{ $grp->name }}</span>
+                                        </span>
+                                    @empty
+                                        <span class="text-[11px] text-slate-400 italic">Chưa gán nhóm chức năng cụ thể</span>
+                                    @endforelse
+                                </div>
+                            </div>
+
                             <!-- Permissions Badges Preview -->
-                            <div class="space-y-2 pt-3 border-t border-slate-100">
+                            <div class="space-y-2 mt-3 pt-3 border-t border-slate-100">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Các quyền được cấp:</span>
+                                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                                        Tổng quyền có hiệu lực:
+                                    </span>
                                     <span class="text-[11px] font-bold text-purple-700 font-mono">
                                         {{ count((array)$role->permissions) }} quyền
                                     </span>
                                 </div>
 
-                                <div class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1">
+                                <div class="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
                                     @if($role->permissions)
                                         @foreach($role->permissions as $perm)
-                                            <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-semibold bg-purple-50 text-purple-700 border border-purple-200">
-                                                ✓ {{ str_replace('_', ' ', $perm) }}
+                                            <span class="px-2 py-0.5 rounded-lg text-[10px] font-mono font-semibold bg-purple-50 text-purple-700 border border-purple-200">
+                                                ✓ {{ $perm }}
                                             </span>
                                         @endforeach
                                     @else

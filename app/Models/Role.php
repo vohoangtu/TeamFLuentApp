@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Role extends Model
@@ -37,6 +38,45 @@ class Role extends Model
     public function members(): HasMany
     {
         return $this->hasMany(Member::class);
+    }
+
+    /**
+     * Functional permission groups assigned to this role.
+     */
+    public function permissionGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(PermissionGroup::class, 'role_permission_group')
+            ->withTimestamps();
+    }
+
+    /**
+     * Check if this role belongs to a given permission group.
+     */
+    public function hasPermissionGroup(int|string|PermissionGroup $group): bool
+    {
+        if ($group instanceof PermissionGroup) {
+            $id = $group->id;
+        } elseif (is_numeric($group)) {
+            $id = (int) $group;
+        } else {
+            return $this->permissionGroups->contains('slug', $group);
+        }
+
+        return $this->permissionGroups->contains('id', $id);
+    }
+
+    /**
+     * Resolve effective compiled permissions from attached groups and direct permissions.
+     *
+     * @return list<string>
+     */
+    public function getEffectivePermissionsAttribute(): array
+    {
+        $groupPermissions = $this->relationLoaded('permissionGroups')
+            ? $this->permissionGroups->pluck('permissions')->flatten()->filter()->all()
+            : $this->permissionGroups()->pluck('permissions')->flatten()->filter()->all();
+
+        return array_values(array_unique(array_merge($groupPermissions, $this->permissions ?? [])));
     }
 
     /**

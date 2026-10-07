@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\DTOs\RoleData;
+use App\Models\PermissionGroup;
 use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -25,13 +26,28 @@ class CreateRoleAction
                 $counter++;
             }
 
-            return Role::create([
+            $role = Role::create([
                 'name' => $data->name,
                 'slug' => $slug,
                 'badge_color' => $data->badgeColor,
                 'description' => $data->description,
                 'permissions' => $data->permissions,
             ]);
+
+            if (! empty($data->permissionGroupIds)) {
+                $role->permissionGroups()->sync($data->permissionGroupIds);
+
+                $groupPermissions = PermissionGroup::whereIn('id', $data->permissionGroupIds)
+                    ->pluck('permissions')
+                    ->flatten()
+                    ->filter()
+                    ->all();
+
+                $allPermissions = array_values(array_unique(array_merge($groupPermissions, $data->permissions)));
+                $role->update(['permissions' => $allPermissions]);
+            }
+
+            return $role->fresh(['permissionGroups']);
         });
     }
 }

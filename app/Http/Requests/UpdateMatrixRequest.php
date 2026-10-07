@@ -20,6 +20,9 @@ class UpdateMatrixRequest extends FormRequest
             'matrix' => ['nullable', 'array'],
             'matrix.*' => ['nullable', 'array'],
             'matrix.*.*' => ['string'],
+            'matrix_groups' => ['nullable', 'array'],
+            'matrix_groups.*' => ['nullable', 'array'],
+            'matrix_groups.*.*' => ['integer', 'exists:permission_groups,id'],
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\PermissionGroupController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TeamController;
@@ -27,6 +28,9 @@ Route::resource('teams', TeamController::class);
 // Role Management & RBAC Permissions Matrix
 Route::post('roles/matrix', [RoleController::class, 'updateMatrix'])->name('roles.matrix.update');
 Route::resource('roles', RoleController::class);
+
+// Functional Permission Groups (Nhóm Quyền Chức Năng: Dev, System, Management...)
+Route::resource('permission-groups', PermissionGroupController::class)->except(['index', 'show']);
 
 // Theme & Blade Component Showcase
 Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');

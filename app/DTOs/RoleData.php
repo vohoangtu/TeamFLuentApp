@@ -6,6 +6,7 @@ readonly class RoleData
 {
     /**
      * @param  list<string>  $permissions
+     * @param  list<int>  $permissionGroupIds
      */
     public function __construct(
         public string $name,
@@ -13,6 +14,7 @@ readonly class RoleData
         public string $badgeColor,
         public ?string $description,
         public array $permissions,
+        public array $permissionGroupIds = [],
     ) {}
 
     /**
@@ -26,6 +28,7 @@ readonly class RoleData
             badgeColor: (string) ($data['badge_color'] ?? 'purple'),
             description: isset($data['description']) ? (string) $data['description'] : null,
             permissions: array_values((array) ($data['permissions'] ?? [])),
+            permissionGroupIds: array_values(array_map('intval', (array) ($data['permission_group_ids'] ?? []))),
         );
     }
 }

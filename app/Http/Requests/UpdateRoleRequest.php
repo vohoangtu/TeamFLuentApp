@@ -27,6 +27,8 @@ class UpdateRoleRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:500'],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => ['string'],
+            'permission_group_ids' => ['nullable', 'array'],
+            'permission_group_ids.*' => ['integer', 'exists:permission_groups,id'],
         ];
     }
 
