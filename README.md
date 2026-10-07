@@ -114,22 +114,50 @@ vendor/bin/pint
 
 ---
 
-## 📂 Cấu trúc thư mục chính
+## 📂 Cấu trúc thư mục chuẩn Enterprise
 
 ```text
 TeamManager/
-├── app/                  # Chứa logic ứng dụng (Models, Controllers, v.v.)
-│   ├── Http/Controllers/ # Xử lý các request từ web routes
-│   └── Models/          # Eloquent Models
-├── database/             # Migrations, Factories, Seeders
-│   └── database.sqlite   # File CSDL SQLite mặc định
+├── app/
+│   ├── Actions/          # Single-purpose business use cases (bọc DB::transaction)
+│   ├── DTOs/             # Strongly-typed Data Transfer Objects (PHP 8.5 readonly class)
+│   ├── Enums/            # Type-safe Domain Enums (ProjectStatus, ProjectPriority, MemberStatus)
+│   ├── Events/           # Domain Events (MemberAssignedToProject, MemberWorkloadExceeded)
+│   ├── Listeners/        # Structured Audit Logging & Notification Handlers
+│   ├── Services/         # Enterprise Domain Services (WorkloadService)
+│   ├── Http/
+│   │   ├── Controllers/  # Thin Controllers (chỉ điều hướng và gọi Actions/Services)
+│   │   └── Requests/     # Form Requests validation và DTO transformations ($request->toDto())
+│   └── Models/           # Eloquent Models với Enums casts và relationships
+├── database/
+│   ├── migrations/       # Migrations với foreign keys, indexes, cascades
+│   └── seeders/          # Database seeder dữ liệu đa dự án thực tế
 ├── resources/
-│   ├── css/              # Tailwind CSS styles (app.css)
-│   ├── js/               # JavaScript entry point (app.js)
-│   └── views/            # Blade Templates (.blade.php)
+│   ├── css/              # Tailwind CSS v4 & Fluent 2 Mica Material utilities
+│   └── views/            # Fluent 2 Mica Blade Views & Components
 ├── routes/
-│   ├── web.php           # Các route giao diện Blade
-│   └── console.php       # Artisan commands tùy chỉnh
-├── tests/                # Feature và Unit tests
-└── vite.config.js        # Cấu hình Vite & Tailwind
+│   └── web.php           # Scoped resourceful web routes
+└── tests/                # PHPUnit Feature & Unit Test Suite
 ```
+
+---
+
+## 🏛️ Quy chuẩn Lập trình Enterprise (Enterprise Guidelines)
+
+1. **Kiến trúc phân tầng (Layered Architecture & Thin Controllers)**:
+   - Controller chỉ nhận Request, xác thực, chuyển đổi sang **DTO** và ủy thác cho **Action/Service**.
+   - Không đặt business logic hay câu truy vấn phức tạp trực tiếp trong Controller hay Blade Views.
+2. **Data Transfer Objects (DTOs)**:
+   - Dùng `readonly class` với thuộc tính có kiểu dữ liệu tường minh thay vì mảng lỏng lẻo (`array`).
+3. **Domain Enums (PHP 8.5 Native Enums)**:
+   - Sử dụng Enum có định kiểu (`string`) cho trạng thái (`ProjectStatus`, `MemberStatus`, `ProjectPriority`).
+   - Tích hợp phương thức nhãn (`label()`), màu huy hiệu Fluent 2 (`badgeClass()`), chấm tín hiệu (`dotClass()`).
+4. **Đảm bảo tính toàn vẹn dữ liệu (ACID Transactions)**:
+   - Mọi thao tác ghi dữ liệu đa bước (gán thành viên, cập nhật đội trưởng) đều được bao bọc trong `DB::transaction()`.
+5. **Giám sát tải năng suất (Workload Management Service)**:
+   - Tự động tính toán tổng tỷ lệ tải (% Workload) của thành viên khi kiêm nhiệm đa dự án.
+   - Kích hoạt sự kiện `MemberWorkloadExceeded` khi vượt ngưỡng 100% công suất.
+6. **Kiểm soát tính nghiêm ngặt (Strict Mode)**:
+   - Kích hoạt `Model::shouldBeStrict(! app()->isProduction())` trong `AppServiceProvider` nhằm ngăn chặn triệt để lỗi N+1 truy vấn và các thuộc tính chưa được khai báo.
+7. **Kiểm thử & Chất lượng mã nguồn**:
+   - Tuân thủ bộ test PHPUnit và định dạng tự động với Laravel Pint trước khi hoàn tất.
