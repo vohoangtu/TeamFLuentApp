@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MemberStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +34,7 @@ class Member extends Model
     protected function casts(): array
     {
         return [
+            'status' => MemberStatus::class,
             'joined_at' => 'date',
             'is_team_lead' => 'boolean',
         ];
@@ -78,27 +80,22 @@ class Member extends Model
      */
     public function getStatusBadgeAttribute(): array
     {
-        return match ($this->status) {
-            'active' => [
-                'label' => 'Đang làm việc',
-                'class' => 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.25)]',
-                'dot' => 'bg-emerald-400',
-            ],
-            'on_leave' => [
-                'label' => 'Nghỉ phép',
-                'class' => 'bg-amber-500/15 text-amber-300 border-amber-500/30 shadow-[0_0_8px_rgba(245,158,11,0.2)]',
-                'dot' => 'bg-amber-400',
-            ],
-            'inactive' => [
-                'label' => 'Đã rời nhóm',
-                'class' => 'bg-slate-500/15 text-slate-400 border-slate-500/30',
-                'dot' => 'bg-slate-400',
-            ],
-            default => [
-                'label' => ucfirst($this->status),
+        $statusEnum = $this->status instanceof MemberStatus
+            ? $this->status
+            : MemberStatus::tryFrom((string) $this->status);
+
+        if (! $statusEnum) {
+            return [
+                'label' => ucfirst((string) $this->status),
                 'class' => 'bg-slate-500/15 text-slate-300 border-slate-500/30',
                 'dot' => 'bg-slate-400',
-            ],
-        };
+            ];
+        }
+
+        return [
+            'label' => $statusEnum->label(),
+            'class' => $statusEnum->badgeClass(),
+            'dot' => $statusEnum->dotClass(),
+        ];
     }
 }

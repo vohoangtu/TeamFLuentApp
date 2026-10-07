@@ -2,22 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\CreateTeamAction;
+use App\Actions\UpdateTeamAction;
 use App\Http\Requests\StoreTeamRequest;
 use App\Http\Requests\UpdateTeamRequest;
 use App\Models\Member;
 use App\Models\Team;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Str;
 
 class TeamController extends Controller
 {
+    public function __construct(
+        private readonly CreateTeamAction $createTeamAction,
+        private readonly UpdateTeamAction $updateTeamAction,
+    ) {}
+
     /**
      * Display a listing of teams.
      */
     public function index(): View
     {
-        $teams = Team::with(['lead', 'members.role', 'members.projects'])
+        $teams = Team::query()
+            ->with(['lead', 'members.role', 'members.projects'])
             ->withCount('members')
             ->orderBy('name')
             ->get();
@@ -32,7 +39,7 @@ class TeamController extends Controller
      */
     public function create(): View
     {
-        $potentialLeads = Member::where('status', 'active')->orderBy('name')->get();
+        $potentialLeads = Member::query()->where('status', 'active')->orderBy('name')->get();
 
         return view('teams.create', [
             'potentialLeads' => $potentialLeads,
@@ -44,14 +51,7 @@ class TeamController extends Controller
      */
     public function store(StoreTeamRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-        $validated['slug'] = Str::slug($validated['name']);
-
-        $team = Team::create($validated);
-
-        if (! empty($validated['lead_id'])) {
-            Member::where('id', $validated['lead_id'])->update(['team_id' => $team->id, 'is_team_lead' => true]);
-        }
+        $team = $this->createTeamAction->handle($request->toDto());
 
         return redirect()->route('teams.show', $team)
             ->with('success', 'Nhóm '.$team->name.' đã được thành lập thành công!');
@@ -74,7 +74,8 @@ class TeamController extends Controller
      */
     public function edit(Team $team): View
     {
-        $potentialLeads = Member::where('team_id', $team->id)
+        $potentialLeads = Member::query()
+            ->where('team_id', $team->id)
             ->orWhere('id', $team->lead_id)
             ->orderBy('name')
             ->get();
@@ -90,21 +91,10 @@ class TeamController extends Controller
      */
     public function update(UpdateTeamRequest $request, Team $team): RedirectResponse
     {
-        $validated = $request->validated();
+        $updatedTeam = $this->updateTeamAction->handle($team, $request->toDto());
 
-        $oldLeadId = $team->lead_id;
-        $team->update($validated);
-
-        if ($oldLeadId && $oldLeadId !== ($validated['lead_id'] ?? null)) {
-            Member::where('id', $oldLeadId)->update(['is_team_lead' => false]);
-        }
-
-        if (! empty($validated['lead_id'])) {
-            Member::where('id', $validated['lead_id'])->update(['is_team_lead' => true]);
-        }
-
-        return redirect()->route('teams.show', $team)
-            ->with('success', 'Thông tin nhóm '.$team->name.' đã được cập nhật!');
+        return redirect()->route('teams.show', $updatedTeam)
+            ->with('success', 'Thông tin nhóm '.$updatedTeam->name.' đã được cập nhật!');
     }
 
     /**

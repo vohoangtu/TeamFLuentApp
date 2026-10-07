@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\DTOs\ProjectData;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -37,5 +38,13 @@ class UpdateProjectRequest extends FormRequest
             'due_date' => ['nullable', 'date'],
             'budget' => ['nullable', 'numeric', 'min:0'],
         ];
+    }
+
+    /**
+     * Convert validated input into a strongly-typed ProjectData DTO.
+     */
+    public function toDto(): ProjectData
+    {
+        return ProjectData::fromArray($this->validated());
     }
 }

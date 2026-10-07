@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\AssignMemberToProjectAction;
+use App\Actions\CreateProjectAction;
+use App\Actions\UnassignMemberFromProjectAction;
+use App\Actions\UpdateProjectAction;
+use App\Http\Requests\AssignProjectRequest;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Member;
@@ -9,16 +14,22 @@ use App\Models\Project;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
+    public function __construct(
+        private readonly CreateProjectAction $createProjectAction,
+        private readonly UpdateProjectAction $updateProjectAction,
+        private readonly AssignMemberToProjectAction $assignProjectAction,
+        private readonly UnassignMemberFromProjectAction $unassignProjectAction,
+    ) {}
+
     /**
      * Display a listing of projects.
      */
     public function index(Request $request): View
     {
-        $query = Project::with(['members.role', 'members.team']);
+        $query = Project::query()->with(['members.role', 'members.team']);
 
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
@@ -37,7 +48,7 @@ class ProjectController extends Controller
         }
 
         $projects = $query->orderByRaw("CASE priority WHEN 'urgent' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END")
-            ->latest()
+            ->latest('id')
             ->paginate(9)
             ->withQueryString();
 
@@ -59,10 +70,7 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-        $validated['slug'] = Str::slug($validated['name']).'-'.Str::lower($validated['code']);
-
-        $project = Project::create($validated);
+        $project = $this->createProjectAction->handle($request->toDto());
 
         return redirect()->route('projects.show', $project)
             ->with('success', 'Dự án '.$project->name.' đã được khởi tạo!');
@@ -76,7 +84,7 @@ class ProjectController extends Controller
         $project->load(['members.role', 'members.team']);
 
         $assignedMemberIds = $project->members->pluck('id')->all();
-        $availableMembers = Member::with(['role', 'team'])
+        $availableMembers = Member::query()->with(['role', 'team'])
             ->whereNotIn('id', $assignedMemberIds)
             ->where('status', 'active')
             ->orderBy('name')
@@ -103,11 +111,10 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project): RedirectResponse
     {
-        $validated = $request->validated();
-        $project->update($validated);
+        $updatedProject = $this->updateProjectAction->handle($project, $request->toDto());
 
-        return redirect()->route('projects.show', $project)
-            ->with('success', 'Thông tin dự án '.$project->name.' đã được cập nhật!');
+        return redirect()->route('projects.show', $updatedProject)
+            ->with('success', 'Thông tin dự án '.$updatedProject->name.' đã được cập nhật!');
     }
 
     /**
@@ -125,21 +132,15 @@ class ProjectController extends Controller
     /**
      * Assign a member to this project.
      */
-    public function assignMember(Request $request, Project $project): RedirectResponse
+    public function assignMember(AssignProjectRequest $request, Project $project): RedirectResponse
     {
-        $validated = $request->validate([
-            'member_id' => ['required', 'exists:members,id'],
-            'role_in_project' => ['required', 'string', 'max:100'],
-            'allocation_percent' => ['required', 'integer', 'min:5', 'max:100'],
-        ]);
+        $member = Member::findOrFail($request->validated('member_id'));
 
-        $project->members()->syncWithoutDetaching([
-            $validated['member_id'] => [
-                'role_in_project' => $validated['role_in_project'],
-                'allocation_percent' => $validated['allocation_percent'],
-                'assigned_at' => now()->toDateString(),
-            ],
-        ]);
+        $this->assignProjectAction->handle(
+            member: $member,
+            project: $project,
+            data: $request->toDto($project->id),
+        );
 
         return redirect()->route('projects.show', $project)
             ->with('success', 'Đã bổ nhiệm thành viên vào dự án!');
@@ -150,7 +151,7 @@ class ProjectController extends Controller
      */
     public function removeMember(Project $project, Member $member): RedirectResponse
     {
-        $project->members()->detach($member->id);
+        $this->unassignProjectAction->handle($member, $project);
 
         return redirect()->route('projects.show', $project)
             ->with('success', 'Đã rút thành viên '.$member->name.' khỏi dự án.');

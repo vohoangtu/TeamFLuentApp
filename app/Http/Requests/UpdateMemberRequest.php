@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\DTOs\MemberData;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -37,5 +38,16 @@ class UpdateMemberRequest extends FormRequest
             'bio' => ['nullable', 'string', 'max:1000'],
             'joined_at' => ['nullable', 'date'],
         ];
+    }
+
+    /**
+     * Convert validated input into a strongly-typed MemberData DTO.
+     */
+    public function toDto(): MemberData
+    {
+        $validated = $this->validated();
+        $validated['is_team_lead'] = $this->boolean('is_team_lead');
+
+        return MemberData::fromArray($validated);
     }
 }

@@ -6,52 +6,52 @@ use App\Models\Member;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
+use App\Services\WorkloadService;
 use Illuminate\Contracts\View\View;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        private readonly WorkloadService $workloadService,
+    ) {}
+
     /**
      * Display the Fluent 2 Mica Ultra colorful dashboard.
      */
     public function index(): View
     {
-        $totalMembers = Member::count();
-        $totalTeams = Team::count();
-        $totalProjects = Project::count();
+        $workloadSummary = $this->workloadService->getWorkloadSummary();
 
-        $activeProjects = Project::with(['members.role'])
+        $activeProjects = Project::query()
+            ->with(['members.role'])
             ->whereIn('status', ['in_progress', 'review', 'planning'])
             ->orderByRaw("CASE priority WHEN 'urgent' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 ELSE 4 END")
+            ->orderByDesc('created_at')
             ->take(5)
             ->get();
 
-        $multiProjectMembersCount = Member::has('projects', '>=', 2)->count();
+        $roles = Role::query()->withCount('members')->orderBy('id')->get();
+        $teams = Team::query()->with(['lead'])->withCount('members')->orderBy('name')->get();
 
-        $members = Member::with(['team', 'role', 'projects'])->get();
-        $totalAllocationSum = $members->sum(fn (Member $m) => $m->total_allocation);
-        $averageAllocation = $totalMembers > 0 ? (int) round($totalAllocationSum / $totalMembers) : 0;
-
-        $overloadedMembers = $members->filter(fn (Member $m) => $m->total_allocation > 100);
-
-        $roles = Role::withCount('members')->get();
-        $teams = Team::with(['lead'])->withCount('members')->get();
-
-        $recentAssignments = Member::with(['projects' => function ($q) {
-            $q->latest('project_members.created_at')->take(1);
-        }, 'team', 'role'])
+        $recentAssignments = Member::query()
+            ->with([
+                'projects' => fn ($q) => $q->latest('project_members.created_at')->take(1),
+                'team',
+                'role',
+            ])
             ->has('projects')
             ->latest('updated_at')
             ->take(6)
             ->get();
 
         return view('dashboard', [
-            'totalMembers' => $totalMembers,
-            'totalTeams' => $totalTeams,
-            'totalProjects' => $totalProjects,
+            'totalMembers' => $workloadSummary['totalMembers'],
+            'totalTeams' => $teams->count(),
+            'totalProjects' => Project::count(),
             'activeProjects' => $activeProjects,
-            'multiProjectMembersCount' => $multiProjectMembersCount,
-            'averageAllocation' => $averageAllocation,
-            'overloadedMembers' => $overloadedMembers,
+            'multiProjectMembersCount' => $workloadSummary['multiProjectMembersCount'],
+            'averageAllocation' => $workloadSummary['averageAllocation'],
+            'overloadedMembers' => $workloadSummary['overloadedMembers'],
             'roles' => $roles,
             'teams' => $teams,
             'recentAssignments' => $recentAssignments,

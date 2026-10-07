@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\DTOs\TeamData;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -29,5 +30,13 @@ class StoreTeamRequest extends FormRequest
             'color' => ['nullable', 'string', 'max:100'],
             'lead_id' => ['nullable', 'exists:members,id'],
         ];
+    }
+
+    /**
+     * Convert to strongly-typed TeamData DTO.
+     */
+    public function toDto(): TeamData
+    {
+        return TeamData::fromArray($this->validated());
     }
 }

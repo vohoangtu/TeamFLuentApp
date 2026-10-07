@@ -2,11 +2,20 @@
 
 namespace Tests\Feature;
 
+use App\Actions\AssignMemberToProjectAction;
+use App\DTOs\AssignProjectData;
+use App\Enums\MemberStatus;
+use App\Enums\ProjectPriority;
+use App\Enums\ProjectStatus;
+use App\Events\MemberAssignedToProject;
+use App\Events\MemberWorkloadExceeded;
 use App\Models\Member;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
+use App\Services\WorkloadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class TeamManagementTest extends TestCase
@@ -63,15 +72,15 @@ class TeamManagementTest extends TestCase
             'email' => 'a.nguyen@test.internal',
             'team_id' => $this->engineeringTeam->id,
             'role_id' => $this->developerRole->id,
-            'status' => 'active',
+            'status' => MemberStatus::Active,
         ]);
 
         $project1 = Project::create([
             'name' => 'Dự án Alpha AI',
             'slug' => 'du-an-alpha-ai',
             'code' => 'PRJ-A1',
-            'status' => 'in_progress',
-            'priority' => 'urgent',
+            'status' => ProjectStatus::InProgress,
+            'priority' => ProjectPriority::Urgent,
             'progress' => 50,
         ]);
 
@@ -79,8 +88,8 @@ class TeamManagementTest extends TestCase
             'name' => 'Dự án Beta Cloud',
             'slug' => 'du-an-beta-cloud',
             'code' => 'PRJ-B2',
-            'status' => 'in_progress',
-            'priority' => 'high',
+            'status' => ProjectStatus::InProgress,
+            'priority' => ProjectPriority::High,
             'progress' => 30,
         ]);
 
@@ -118,8 +127,8 @@ class TeamManagementTest extends TestCase
             'name' => 'Mobile App Pro',
             'slug' => 'mobile-app-pro',
             'code' => 'PRJ-M1',
-            'status' => 'planning',
-            'priority' => 'medium',
+            'status' => ProjectStatus::Planning,
+            'priority' => ProjectPriority::Medium,
             'progress' => 10,
         ]);
 
@@ -150,15 +159,15 @@ class TeamManagementTest extends TestCase
             'email' => 'c.tran@test.internal',
             'team_id' => $this->engineeringTeam->id,
             'role_id' => $this->developerRole->id,
-            'status' => 'active',
+            'status' => MemberStatus::Active,
         ]);
 
         $project = Project::create([
             'name' => 'Data Lake v1',
             'slug' => 'data-lake-v1',
             'code' => 'PRJ-D1',
-            'status' => 'in_progress',
-            'priority' => 'high',
+            'status' => ProjectStatus::InProgress,
+            'priority' => ProjectPriority::High,
             'progress' => 40,
         ]);
 
@@ -174,6 +183,67 @@ class TeamManagementTest extends TestCase
 
         $member->refresh();
         $this->assertCount(0, $member->projects);
+    }
+
+    public function test_assign_action_dispatches_events_and_detects_overload(): void
+    {
+        Event::fake([MemberAssignedToProject::class, MemberWorkloadExceeded::class]);
+
+        $member = Member::create([
+            'name' => 'Phạm Văn D',
+            'email' => 'd.pham@test.internal',
+            'team_id' => $this->engineeringTeam->id,
+            'role_id' => $this->developerRole->id,
+            'status' => MemberStatus::Active,
+        ]);
+
+        $project1 = Project::create([
+            'name' => 'Project 101',
+            'slug' => 'prj-101',
+            'code' => 'PRJ-101',
+            'status' => ProjectStatus::InProgress,
+            'priority' => ProjectPriority::High,
+            'progress' => 20,
+        ]);
+
+        $project2 = Project::create([
+            'name' => 'Project 102',
+            'slug' => 'prj-102',
+            'code' => 'PRJ-102',
+            'status' => ProjectStatus::InProgress,
+            'priority' => ProjectPriority::High,
+            'progress' => 20,
+        ]);
+
+        $action = app(AssignMemberToProjectAction::class);
+
+        // Assign 70%
+        $action->handle($member, $project1, new AssignProjectData($project1->id, 'Lead', 70));
+        Event::assertDispatched(MemberAssignedToProject::class);
+        Event::assertNotDispatched(MemberWorkloadExceeded::class);
+
+        // Assign additional 50% (total 120% => exceeds 100%)
+        $action->handle($member, $project2, new AssignProjectData($project2->id, 'Architect', 50));
+        Event::assertDispatched(MemberWorkloadExceeded::class);
+    }
+
+    public function test_workload_service_metrics(): void
+    {
+        $member = Member::create([
+            'name' => 'Hoàng Văn E',
+            'email' => 'e.hoang@test.internal',
+            'team_id' => $this->engineeringTeam->id,
+            'role_id' => $this->developerRole->id,
+            'status' => MemberStatus::Active,
+        ]);
+
+        $service = app(WorkloadService::class);
+        $summary = $service->getWorkloadSummary();
+
+        $this->assertArrayHasKey('totalMembers', $summary);
+        $this->assertArrayHasKey('averageAllocation', $summary);
+        $this->assertArrayHasKey('multiProjectMembersCount', $summary);
+        $this->assertArrayHasKey('overloadedMembers', $summary);
     }
 
     public function test_projects_and_teams_and_roles_index_pages_render(): void
