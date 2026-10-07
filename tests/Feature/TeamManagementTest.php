@@ -251,6 +251,12 @@ class TeamManagementTest extends TestCase
         $this->get(route('projects.index'))->assertStatus(200);
         $this->get(route('teams.index'))->assertStatus(200);
         $this->get(route('roles.index'))->assertStatus(200);
+
+        $response = $this->get(route('themes.index'))->assertStatus(200);
+        $response->assertSee('Fluent 2 MICA Light');
+        $response->assertSee('Dracula');
+        $response->assertSee('GitHub Dark');
+        $response->assertSee('One Dark Pro');
     }
 
     public function test_all_create_edit_and_show_pages_render_successfully(): void

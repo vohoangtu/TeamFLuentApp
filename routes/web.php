@@ -5,6 +5,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\ThemeController;
 use Illuminate\Support\Facades\Route;
 
 // Dashboard
@@ -25,3 +26,6 @@ Route::resource('teams', TeamController::class);
 
 // Role Management
 Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
+
+// Theme & Blade Component Showcase
+Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" class="light h-full">
+<html lang="vi" class="light h-full" data-theme="fluent-light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,21 +9,36 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
 
+    <!-- Instant Theme Hydration (Zero FOUC) -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('teamnexus_theme') || 'fluent-light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'fluent-light') {
+                document.documentElement.classList.add('light');
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+            }
+        })();
+    </script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="h-full bg-slate-50 text-slate-800 font-sans antialiased overflow-x-hidden selection:bg-fuchsia-500 selection:text-white mica-bg">
 
-    <!-- Ambient Fluent 2 Mica Ultra-Colorful Pastel Aurora Orbs -->
-    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-br from-indigo-400/25 via-purple-300/20 to-transparent blur-3xl animate-pulse" style="animation-duration: 8s;"></div>
-        <div class="absolute top-1/4 -right-28 w-[30rem] h-[30rem] rounded-full bg-gradient-to-br from-fuchsia-400/25 via-pink-300/15 to-transparent blur-3xl"></div>
-        <div class="absolute -bottom-32 left-1/3 w-[36rem] h-[36rem] rounded-full bg-gradient-to-tr from-cyan-400/20 via-teal-300/15 to-transparent blur-3xl"></div>
-        <div class="absolute top-2/3 right-1/4 w-80 h-80 rounded-full bg-gradient-to-bl from-amber-300/25 via-rose-300/15 to-transparent blur-3xl"></div>
+    <!-- Ambient Multi-Theme Pastel Aurora Orbs -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" style="opacity: var(--aurora-opacity);">
+        <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-br from-indigo-400/35 via-purple-300/25 to-transparent blur-3xl animate-pulse" style="animation-duration: 8s;"></div>
+        <div class="absolute top-1/4 -right-28 w-[30rem] h-[30rem] rounded-full bg-gradient-to-br from-fuchsia-400/30 via-pink-300/20 to-transparent blur-3xl"></div>
+        <div class="absolute -bottom-32 left-1/3 w-[36rem] h-[36rem] rounded-full bg-gradient-to-tr from-cyan-400/25 via-teal-300/20 to-transparent blur-3xl"></div>
+        <div class="absolute top-2/3 right-1/4 w-80 h-80 rounded-full bg-gradient-to-bl from-amber-300/30 via-rose-300/20 to-transparent blur-3xl"></div>
     </div>
 
     <div class="relative z-10 flex min-h-screen">
-        <!-- Sidebar Navigation (Fluent 2 Acrylic Mica Light) -->
-        <aside class="w-72 shrink-0 backdrop-blur-3xl bg-white/80 border-r border-slate-200/80 flex flex-col justify-between transition-all duration-300 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <!-- Sidebar Navigation -->
+        <aside class="w-72 shrink-0 backdrop-blur-3xl theme-sidebar border-r flex flex-col justify-between transition-all duration-300 shadow-[4px_0_24px_rgba(0,0,0,0.03)]">
             <div>
                 <!-- Brand Header -->
                 <div class="h-20 flex items-center gap-3.5 px-6 border-b border-slate-200/80">
@@ -36,7 +51,7 @@
                     <div>
                         <div class="font-bold text-lg tracking-tight text-slate-900 flex items-center gap-1.5">
                             Team<span class="text-gradient-fluent">Nexus</span>
-                            <span class="px-1.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-md bg-purple-100 text-purple-700 border border-purple-200">Light</span>
+                            <span class="px-1.5 py-0.5 text-[9px] uppercase font-bold tracking-wider rounded-md bg-purple-100 text-purple-700 border border-purple-200">SaaS</span>
                         </div>
                         <p class="text-xs text-slate-500 font-medium">Enterprise Workspace</p>
                     </div>
@@ -103,6 +118,17 @@
                         </div>
                         <span>Vai trò & Quyền hạn</span>
                     </a>
+
+                    <!-- Themes & Components -->
+                    <a href="{{ route('themes.index') }}"
+                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 {{ request()->routeIs('themes.*') ? 'bg-gradient-to-r from-pink-100 to-purple-50 text-pink-900 border border-pink-200/80 shadow-[0_2px_10px_rgba(236,72,153,0.12)] font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80' }}">
+                        <div class="p-1.5 rounded-lg {{ request()->routeIs('themes.*') ? 'bg-pink-200/80 text-pink-700' : 'bg-slate-100 text-slate-500' }}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                            </svg>
+                        </div>
+                        <span>Giao diện & Themes</span>
+                    </a>
                 </nav>
             </div>
 
@@ -136,44 +162,45 @@
 
         <!-- Main Workspace Area -->
         <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
-            <!-- Top Mica Acrylic App Header -->
-            <header class="h-20 shrink-0 sticky top-0 z-30 backdrop-blur-3xl bg-white/80 border-b border-slate-200/80 px-8 flex items-center justify-between shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
+            <!-- Top App Header with Theme Switcher -->
+            <header class="h-20 shrink-0 sticky top-0 z-30 backdrop-blur-3xl theme-header border-b px-8 flex items-center justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
                 <div>
                     <h1 class="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2.5">
                         {{ $header ?? 'Bảng điều khiển' }}
                     </h1>
-                    <p class="text-xs text-slate-500 font-medium mt-0.5">Hệ thống phân bổ thành viên & quản trị đa dự án Fluent 2 Mica (Light Theme)</p>
+                    <p class="text-xs text-slate-500 font-medium mt-0.5">Hệ thống phân bổ thành viên & quản trị đa dự án Enterprise</p>
                 </div>
 
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3.5">
                     <!-- Quick Search Input -->
-                    <form action="{{ route('members.index') }}" method="GET" class="relative hidden md:block w-72">
+                    <form action="{{ route('members.index') }}" method="GET" class="relative hidden xl:block w-64">
                         <input type="text"
                                name="search"
                                value="{{ request('search') }}"
-                               placeholder="Tìm thành viên, dự án, email..."
+                               placeholder="Tìm thành viên, dự án..."
                                class="w-full pl-9 pr-4 py-2 text-xs rounded-xl mica-input">
                         <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </form>
 
+                    <!-- Theme Switcher Component (Fluent 2, Dracula, GitHub, One) -->
+                    <x-theme-switcher />
+
                     <!-- Quick Action Buttons -->
-                    <a href="{{ route('members.create') }}"
-                       class="glow-btn-primary px-4 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-2">
+                    <x-button variant="primary" size="md" href="{{ route('members.create') }}">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
                         </svg>
                         <span>Thêm thành viên</span>
-                    </a>
+                    </x-button>
 
-                    <a href="{{ route('projects.create') }}"
-                       class="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 mica-pill hover:text-slate-900 flex items-center gap-2">
+                    <x-button variant="secondary" size="md" href="{{ route('projects.create') }}">
                         <svg class="w-4 h-4 text-fuchsia-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
                         <span>Tạo dự án</span>
-                    </a>
+                    </x-button>
                 </div>
             </header>
 
@@ -217,7 +244,7 @@
 
             <!-- Footer -->
             <footer class="py-6 px-8 border-t border-slate-200/80 text-center text-xs text-slate-500 font-medium">
-                TeamNexus SaaS Platform &bull; Fluent 2 Mica Material Design (Light Theme) &bull; Laravel 13 + Blade + Tailwind v4
+                TeamNexus SaaS Platform &bull; Multi-Theme Design (Fluent 2 Mica, Dracula, GitHub, One Dark) &bull; Laravel 13 Blade Components
             </footer>
         </div>
     </div>
