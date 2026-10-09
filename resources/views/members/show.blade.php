@@ -34,10 +34,10 @@
             <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
                     <div class="relative shrink-0">
-                        <img class="w-24 h-24 rounded-3xl object-cover ring-4 ring-white shadow-md"
+                        <img class="w-24 h-24 rounded-3xl object-cover ring-4 ring-white dark:ring-[var(--bg-surface-solid)] shadow-md"
                              src="{{ $member->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode($member->name).'&background=6366f1&color=fff' }}"
                              alt="{{ $member->name }}">
-                        <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white {{ $status['dot'] }}"></span>
+                        <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white dark:border-[var(--bg-surface-solid)] {{ $status['dot'] }}"></span>
                     </div>
 
                     <div class="space-y-2">
@@ -102,9 +102,9 @@
                     <div>
                         <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             <span class="w-3 h-3 rounded-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.4)]"></span>
-                            Dự Án Đang Phụ Trách ({{ $member->projects->count() }})
+                            <span>Dự Án Đang Phụ Trách ({{ $member->projects->count() }})</span>
+                            <x-info-popover text="Thành viên có thể đảm nhiệm vai trò và khối lượng công việc khác nhau trong từng dự án." color="cyan" size="sm" />
                         </h3>
-                        <p class="text-xs text-slate-500 font-medium">Thành viên có thể đảm nhiệm vai trò và khối lượng công việc khác nhau trong từng dự án.</p>
                     </div>
                 </div>
 
@@ -190,9 +190,9 @@
                             <svg class="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            Phân Công Thêm Dự Án Mới
+                            <span>Phân Công Thêm Dự Án Mới</span>
+                            <x-info-popover text="Giao thêm trọng trách dự án cho thành viên này." color="cyan" size="sm" />
                         </h3>
-                        <p class="text-xs text-slate-500 font-medium">Giao thêm trọng trách dự án cho thành viên này</p>
                     </div>
 
                     @if($availableProjects->isNotEmpty())

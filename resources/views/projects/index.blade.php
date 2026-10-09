@@ -12,8 +12,8 @@
                         <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-fuchsia-100 text-fuchsia-800 border border-fuchsia-300">
                             {{ $projects->total() }} dự án
                         </span>
+                        <x-info-popover text="Theo dõi tiến độ, phân bổ nhân sự và ngân sách đa dự án." color="blue" />
                     </h2>
-                    <p class="text-xs text-slate-500 font-medium">Theo dõi tiến độ, phân bổ nhân sự và ngân sách đa dự án.</p>
                 </div>
 
                 <a href="{{ route('projects.create') }}"
@@ -139,10 +139,10 @@
                             </div>
 
                             <div class="flex items-center gap-2 flex-wrap">
-                                <div class="flex -space-x-2 overflow-hidden">
+                                <div class="flex -space-x-2 overflow-hidden items-center">
                                     @foreach($project->members->take(5) as $m)
                                         <a href="{{ route('members.show', $m) }}" title="{{ $m->name }} ({{ $m->pivot->role_in_project }})" class="inline-block relative">
-                                            <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover shadow-sm"
+                                            <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-[var(--bg-surface-solid)] object-cover shadow-sm transition-transform hover:scale-110 hover:z-10"
                                                  src="{{ $m->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode($m->name).'&background=6366f1&color=fff' }}"
                                                  alt="{{ $m->name }}">
                                         </a>

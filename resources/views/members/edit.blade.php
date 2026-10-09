@@ -16,8 +16,8 @@
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                         <span>Chỉnh Sửa Thông Tin: {{ $member->name }}</span>
+                        <x-info-popover text="Cập nhật chức vụ, phòng ban và thông tin liên hệ của nhân sự." color="blue" />
                     </h2>
-                    <p class="text-xs text-slate-500 mt-1 font-medium">Cập nhật chức vụ, phòng ban và thông tin liên hệ của nhân sự.</p>
                 </div>
                 <span class="px-3 py-1 rounded-xl text-xs font-bold border {{ $member->role->badge_classes }}">
                     {{ $member->role->name }}

@@ -37,10 +37,8 @@
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             <span class="w-3 h-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600"></span>
                             Thông Tin Nhóm Chức Năng
+                            <x-info-popover text="Gói các quyền hạn liên quan thành một nhóm chức năng (ví dụ: Nhóm Dev, Nhóm System, Nhóm Quản Trị) để thuận tiện gán cho các vai trò." color="cyan" />
                         </h2>
-                        <p class="text-xs text-slate-500 mt-1 font-medium">
-                            Gói các quyền hạn liên quan thành một nhóm chức năng (ví dụ: Nhóm Dev, Nhóm System, Nhóm Quản Trị) để thuận tiện gán cho các vai trò.
-                        </p>
                     </div>
                     <x-badge color="cyan" size="md">Functional Bundle</x-badge>
                 </div>
@@ -129,10 +127,8 @@
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             <span class="w-3 h-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600"></span>
                             Tập Hợp Quyền Hạn Trong Nhóm Này
+                            <x-info-popover text="Tích chọn các quyền mà bất kỳ vai trò nào khi được gán nhóm này sẽ sở hữu." color="emerald" />
                         </h2>
-                        <p class="text-xs text-slate-500 mt-1 font-medium">
-                            Tích chọn các quyền mà bất kỳ vai trò nào khi được gán nhóm này sẽ sở hữu.
-                        </p>
                     </div>
 
                     <div class="flex items-center gap-2">

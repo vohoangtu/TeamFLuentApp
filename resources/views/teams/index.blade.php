@@ -8,8 +8,8 @@
             <div>
                 <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                     <span>Phòng Ban & Nhóm Chức Năng ({{ $teams->count() }})</span>
+                    <x-info-popover text="Tổ chức nhân sự theo chuyên môn, mỗi nhóm có đội trưởng và đóng góp vào nhiều dự án." color="emerald" />
                 </h2>
-                <p class="text-xs text-slate-500 font-medium">Tổ chức nhân sự theo chuyên môn, mỗi nhóm có đội trưởng và đóng góp vào nhiều dự án.</p>
             </div>
 
             <a href="{{ route('teams.create') }}"
@@ -68,14 +68,20 @@
                         <!-- Members avatar stack in this team -->
                         <div class="mt-4 pt-3 border-t border-slate-100">
                             <span class="text-[11px] font-bold text-slate-600 block mb-2">Thành viên trong nhóm:</span>
-                            <div class="flex -space-x-2 overflow-hidden">
+                            <div class="flex -space-x-2 overflow-hidden items-center">
                                 @foreach($team->members->take(6) as $m)
                                     <a href="{{ route('members.show', $m) }}" title="{{ $m->name }} ({{ $m->role->name }})" class="inline-block relative">
-                                        <img class="inline-block h-7 w-7 rounded-full ring-2 ring-white object-cover shadow-sm"
+                                        <img class="inline-block h-7 w-7 rounded-full ring-2 ring-white dark:ring-[var(--bg-surface-solid)] object-cover shadow-sm transition-transform hover:scale-110 hover:z-10"
                                              src="{{ $m->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode($m->name).'&background=6366f1&color=fff' }}"
                                              alt="{{ $m->name }}">
                                     </a>
                                 @endforeach
+                                @if($team->members->count() > 6)
+                                    <span class="inline-flex items-center justify-center h-7 w-7 rounded-full ring-2 ring-white dark:ring-[var(--bg-surface-solid)] bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-[10px] font-bold shadow-sm"
+                                          title="Và {{ $team->members->count() - 6 }} thành viên khác">
+                                        +{{ $team->members->count() - 6 }}
+                                    </span>
+                                @endif
                             </div>
                         </div>
                     </div>

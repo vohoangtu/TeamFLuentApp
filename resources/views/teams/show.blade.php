@@ -64,9 +64,9 @@
             <div>
                 <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                    Danh Sách Thành Viên Thuộc Nhóm ({{ $team->members->count() }} nhân sự)
+                    <span>Danh Sách Thành Viên Thuộc Nhóm ({{ $team->members->count() }} nhân sự)</span>
+                    <x-info-popover text="Mỗi thành viên trong nhóm có thể phụ trách nhiều dự án đa ngành khác nhau." color="emerald" size="sm" />
                 </h3>
-                <p class="text-xs text-slate-500 font-medium">Mỗi thành viên trong nhóm có thể phụ trách nhiều dự án đa ngành khác nhau.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -75,7 +75,7 @@
                         <div>
                             <div class="flex items-center justify-between gap-3 mb-3">
                                 <div class="flex items-center gap-3">
-                                    <img class="w-11 h-11 rounded-xl object-cover ring-2 ring-white shadow-sm"
+                                    <img class="w-11 h-11 rounded-xl object-cover ring-2 ring-white dark:ring-[var(--bg-surface-solid)] shadow-sm"
                                          src="{{ $member->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode($member->name).'&background=6366f1&color=fff' }}"
                                          alt="{{ $member->name }}">
                                     <div>

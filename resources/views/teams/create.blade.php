@@ -15,8 +15,8 @@
                 <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500"></span>
                     Thông Tin Phòng Ban / Nhóm Mới
+                    <x-info-popover text="Thiết lập nhóm làm việc chuyên môn cho tổ chức." color="emerald" />
                 </h2>
-                <p class="text-xs text-slate-500 mt-1 font-medium">Thiết lập nhóm làm việc chuyên môn cho tổ chức.</p>
             </div>
 
             @if($errors->any())

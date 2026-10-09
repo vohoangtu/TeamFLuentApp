@@ -7,7 +7,7 @@
     'badgeColor' => 'primary',
 ])
 
-<div {{ $attributes->merge(['class' => 'mica-card rounded-2xl p-5 border border-white/80 hover:border-purple-300 transition-all flex flex-col justify-between']) }}>
+<div {{ $attributes->merge(['class' => 'mica-card rounded-2xl p-5 transition-all flex flex-col justify-between']) }}>
     <div class="flex items-center justify-between mb-3">
         <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ $title }}</span>
         @if($badge)

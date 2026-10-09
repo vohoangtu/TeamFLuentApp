@@ -28,12 +28,16 @@
 </head>
 <body class="h-full bg-slate-50 text-slate-800 font-sans antialiased overflow-x-hidden selection:bg-fuchsia-500 selection:text-white mica-bg">
 
-    <!-- Ambient Multi-Theme Pastel Aurora Orbs -->
-    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" style="opacity: var(--aurora-opacity);">
-        <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-br from-indigo-400/35 via-purple-300/25 to-transparent blur-3xl animate-pulse" style="animation-duration: 8s;"></div>
-        <div class="absolute top-1/4 -right-28 w-[30rem] h-[30rem] rounded-full bg-gradient-to-br from-fuchsia-400/30 via-pink-300/20 to-transparent blur-3xl"></div>
-        <div class="absolute -bottom-32 left-1/3 w-[36rem] h-[36rem] rounded-full bg-gradient-to-tr from-cyan-400/25 via-teal-300/20 to-transparent blur-3xl"></div>
-        <div class="absolute top-2/3 right-1/4 w-80 h-80 rounded-full bg-gradient-to-bl from-amber-300/30 via-rose-300/20 to-transparent blur-3xl"></div>
+    <!-- Ambient Multi-Theme Adaptive Aurora Orbs -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden transition-opacity duration-700" style="opacity: var(--aurora-opacity);">
+        <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full blur-3xl animate-pulse transition-all duration-700"
+             style="background: radial-gradient(circle, var(--aurora-1) 0%, transparent 70%); animation-duration: 8s;"></div>
+        <div class="absolute top-1/4 -right-28 w-[30rem] h-[30rem] rounded-full blur-3xl transition-all duration-700"
+             style="background: radial-gradient(circle, var(--aurora-2) 0%, transparent 70%);"></div>
+        <div class="absolute -bottom-32 left-1/3 w-[36rem] h-[36rem] rounded-full blur-3xl transition-all duration-700"
+             style="background: radial-gradient(circle, var(--aurora-3) 0%, transparent 70%);"></div>
+        <div class="absolute top-2/3 right-1/4 w-80 h-80 rounded-full blur-3xl transition-all duration-700"
+             style="background: radial-gradient(circle, var(--aurora-4) 0%, transparent 70%);"></div>
     </div>
 
     <div class="relative z-10 flex min-h-screen">
@@ -46,7 +50,7 @@
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                         </svg>
-                        <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white"></span>
+                        <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white dark:border-[var(--bg-sidebar)]"></span>
                     </div>
                     <div>
                         <div class="font-bold text-lg tracking-tight text-slate-900 flex items-center gap-1.5">
@@ -63,8 +67,8 @@
 
                     <!-- Dashboard -->
                     <a href="{{ route('dashboard') }}"
-                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 {{ request()->routeIs('dashboard') ? 'bg-gradient-to-r from-violet-100 to-fuchsia-50 text-violet-900 border border-violet-200/80 shadow-[0_2px_10px_rgba(168,85,247,0.12)] font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80' }}">
-                        <div class="p-1.5 rounded-lg {{ request()->routeIs('dashboard') ? 'bg-violet-200/80 text-violet-700' : 'bg-slate-100 text-slate-500' }}">
+                       class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                        <div class="nav-icon">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                             </svg>
@@ -74,9 +78,9 @@
 
                     <!-- Members -->
                     <a href="{{ route('members.index') }}"
-                       class="flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 {{ request()->routeIs('members.*') ? 'bg-gradient-to-r from-cyan-100 to-blue-50 text-cyan-900 border border-cyan-200/80 shadow-[0_2px_10px_rgba(6,182,212,0.12)] font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80' }}">
+                       class="nav-item justify-between {{ request()->routeIs('members.*') ? 'active' : '' }}">
                         <div class="flex items-center gap-3">
-                            <div class="p-1.5 rounded-lg {{ request()->routeIs('members.*') ? 'bg-cyan-200/80 text-cyan-700' : 'bg-slate-100 text-slate-500' }}">
+                            <div class="nav-icon">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                                 </svg>
@@ -88,8 +92,8 @@
 
                     <!-- Projects -->
                     <a href="{{ route('projects.index') }}"
-                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 {{ request()->routeIs('projects.*') ? 'bg-gradient-to-r from-fuchsia-100 to-pink-50 text-fuchsia-900 border border-fuchsia-200/80 shadow-[0_2px_10px_rgba(217,70,239,0.12)] font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80' }}">
-                        <div class="p-1.5 rounded-lg {{ request()->routeIs('projects.*') ? 'bg-fuchsia-200/80 text-fuchsia-700' : 'bg-slate-100 text-slate-500' }}">
+                       class="nav-item {{ request()->routeIs('projects.*') ? 'active' : '' }}">
+                        <div class="nav-icon">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                             </svg>
@@ -99,8 +103,8 @@
 
                     <!-- Teams -->
                     <a href="{{ route('teams.index') }}"
-                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 {{ request()->routeIs('teams.*') ? 'bg-gradient-to-r from-emerald-100 to-teal-50 text-emerald-900 border border-emerald-200/80 shadow-[0_2px_10px_rgba(16,185,129,0.12)] font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80' }}">
-                        <div class="p-1.5 rounded-lg {{ request()->routeIs('teams.*') ? 'bg-emerald-200/80 text-emerald-700' : 'bg-slate-100 text-slate-500' }}">
+                       class="nav-item {{ request()->routeIs('teams.*') ? 'active' : '' }}">
+                        <div class="nav-icon">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                             </svg>
@@ -110,8 +114,8 @@
 
                     <!-- Roles -->
                     <a href="{{ route('roles.index') }}"
-                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 {{ request()->routeIs('roles.*') ? 'bg-gradient-to-r from-amber-100 to-rose-50 text-amber-900 border border-amber-200/80 shadow-[0_2px_10px_rgba(245,158,11,0.12)] font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80' }}">
-                        <div class="p-1.5 rounded-lg {{ request()->routeIs('roles.*') ? 'bg-amber-200/80 text-amber-700' : 'bg-slate-100 text-slate-500' }}">
+                       class="nav-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
+                        <div class="nav-icon">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                             </svg>
@@ -121,8 +125,8 @@
 
                     <!-- Themes & Components -->
                     <a href="{{ route('themes.index') }}"
-                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 {{ request()->routeIs('themes.*') ? 'bg-gradient-to-r from-pink-100 to-purple-50 text-pink-900 border border-pink-200/80 shadow-[0_2px_10px_rgba(236,72,153,0.12)] font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80' }}">
-                        <div class="p-1.5 rounded-lg {{ request()->routeIs('themes.*') ? 'bg-pink-200/80 text-pink-700' : 'bg-slate-100 text-slate-500' }}">
+                       class="nav-item {{ request()->routeIs('themes.*') ? 'active' : '' }}">
+                        <div class="nav-icon">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
                             </svg>
@@ -134,12 +138,12 @@
 
             <!-- Workspace Quick Stats / User Footer -->
             <div class="p-4 border-t border-slate-200/80 space-y-3">
-                <div class="p-3.5 rounded-2xl bg-white/70 border border-slate-200/80 shadow-sm">
+                <div class="p-3.5 rounded-2xl mica-card shadow-sm">
                     <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5 font-medium">
                         <span>Workload Engine</span>
                         <span class="text-emerald-700 font-bold">Tối ưu</span>
                     </div>
-                    <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                    <div class="w-full bg-slate-200/60 rounded-full h-1.5 overflow-hidden">
                         <div class="h-full bg-gradient-to-r from-violet-600 via-fuchsia-600 to-cyan-500 rounded-full" style="width: 78%;"></div>
                     </div>
                     <p class="text-[11px] text-slate-500 mt-1.5 font-medium">Phân bổ đa dự án hiệu quả</p>
@@ -184,7 +188,7 @@
                         </svg>
                     </form>
 
-                    <!-- Theme Switcher Component (Fluent 2, Dracula, GitHub, One) -->
+                    <!-- Theme Switcher Component (Fluent 2, Dracula, GitHub, One, Nord) -->
                     <x-theme-switcher />
 
                     <!-- Quick Action Buttons -->
@@ -244,7 +248,7 @@
 
             <!-- Footer -->
             <footer class="py-6 px-8 border-t border-slate-200/80 text-center text-xs text-slate-500 font-medium">
-                TeamNexus SaaS Platform &bull; Multi-Theme Design (Fluent 2 Mica, Dracula, GitHub, One Dark) &bull; Laravel 13 Blade Components
+                TeamNexus SaaS Platform &bull; Multi-Theme System (Fluent 2 Mica, Dracula, GitHub, One Dark, Nord Frost) &bull; View Transitions API
             </footer>
         </div>
     </div>

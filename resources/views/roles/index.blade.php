@@ -18,10 +18,8 @@
                     <h2 class="text-lg font-bold text-slate-900">Kiến Trúc Phân Quyền Vai Trò & Nhóm Chức Năng</h2>
                     <x-badge color="primary" size="sm">{{ $roles->count() }} vai trò</x-badge>
                     <x-badge color="cyan" size="sm">{{ $permissionGroups->count() }} nhóm chức năng</x-badge>
+                    <x-info-popover text="Gán quyền theo nhóm chức năng (nhóm Dev, nhóm System...) hoặc thiết lập ma trận phân quyền chi tiết." color="blue" />
                 </div>
-                <p class="text-xs text-slate-500 font-medium">
-                    Gán quyền theo nhóm chức năng (nhóm Dev, nhóm System...) hoặc thiết lập ma trận phân quyền chi tiết.
-                </p>
             </div>
 
             <div class="flex items-center gap-2.5 flex-wrap">
@@ -141,7 +139,7 @@
                                 <!-- ==================================================== -->
                                 <!-- 1. FUNCTIONAL PERMISSION GROUPS (NHÓM CHỨC NĂNG)      -->
                                 <!-- ==================================================== -->
-                                <tr class="bg-gradient-to-r from-cyan-50/90 to-blue-50/90 border-t-2 border-cyan-300 font-bold">
+                                <tr class="bg-gradient-to-r from-cyan-50/90 to-blue-50/90 dark:from-cyan-950/40 dark:to-blue-950/40 border-t-2 border-cyan-300 dark:border-cyan-700 font-bold">
                                     <td colspan="{{ 1 + $roles->count() }}" class="px-4 py-3.5 text-slate-900">
                                         <div class="flex items-center justify-between">
                                             <div class="flex items-center gap-2">
@@ -204,7 +202,7 @@
                                 <!-- ==================================================== -->
                                 @foreach($permissionModules as $moduleKey => $module)
                                     <!-- Module Group Header Row -->
-                                    <tr class="bg-indigo-50/40 border-t-2 border-indigo-200/60 font-bold">
+                                    <tr class="bg-indigo-50/40 dark:bg-indigo-950/30 border-t-2 border-indigo-200/60 dark:border-indigo-800/60 font-bold">
                                         <td colspan="{{ 1 + $roles->count() }}" class="px-4 py-3 text-slate-900">
                                             <div class="flex items-center justify-between">
                                                 <div class="flex items-center gap-2">
@@ -284,11 +282,11 @@
                         </table>
                     </div>
 
-                    <!-- Bottom Action Bar -->
                     <div class="p-4 bg-slate-50 border-t border-slate-200/80 flex items-center justify-between">
-                        <p class="text-xs text-slate-500">
-                            Thay đổi sẽ có hiệu lực ngay sau khi bấm lưu. Mọi thành viên mang vai trò tương ứng sẽ được áp dụng quyền mới.
-                        </p>
+                        <div class="flex items-center gap-2 text-xs text-slate-600 font-medium">
+                            <x-info-popover text="Thay đổi sẽ có hiệu lực ngay sau khi bấm lưu. Mọi thành viên mang vai trò tương ứng sẽ được áp dụng quyền mới." color="slate" />
+                            <span>Lưu ma trận phân quyền</span>
+                        </div>
                         <x-button variant="primary" size="md" type="submit">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -306,8 +304,10 @@
         <div x-show="activeTab === 'groups'" class="space-y-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-base font-bold text-slate-900">Danh Mục Nhóm Quyền Chức Năng (Permission Groups)</h3>
-                    <p class="text-xs text-slate-500">Các gói quyền chức năng được phân loại logic (Nhóm Dev, Nhóm System, Nhóm Quản Trị...).</p>
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        Danh Mục Nhóm Quyền Chức Năng (Permission Groups)
+                        <x-info-popover text="Các gói quyền chức năng được phân loại logic (Nhóm Dev, Nhóm System, Nhóm Quản Trị...)." color="cyan" />
+                    </h3>
                 </div>
                 <x-button variant="primary" size="sm" href="{{ route('permission-groups.create') }}">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -325,7 +325,10 @@
                                 <div class="flex items-center gap-2.5">
                                     <span class="text-2xl">{{ $group->icon }}</span>
                                     <div>
-                                        <h4 class="text-sm font-bold text-slate-900">{{ $group->name }}</h4>
+                                        <h4 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                                            {{ $group->name }}
+                                            <x-info-popover :text="$group->description" color="cyan" size="sm" />
+                                        </h4>
                                         <span class="font-mono text-[10px] text-slate-400">#{{ $group->slug }}</span>
                                     </div>
                                 </div>
@@ -341,9 +344,6 @@
                                 </div>
                             </div>
 
-                            <p class="text-xs text-slate-600 mb-4 leading-relaxed">
-                                {{ $group->description }}
-                            </p>
 
                             <!-- Assigned Roles -->
                             <div class="pt-3 border-t border-slate-100 space-y-2">
@@ -409,20 +409,17 @@
                     <x-card padding="default" class="flex flex-col justify-between hover:border-purple-300 transition-all">
                         <div>
                             <div class="flex items-center justify-between gap-3 mb-3">
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2 flex-wrap">
                                     <span class="text-sm font-bold px-3 py-1 rounded-xl border {{ $role->badge_classes }}">
                                         {{ $role->name }}
                                     </span>
                                     <span class="font-mono text-[10px] text-slate-400">#{{ $role->slug }}</span>
+                                    <x-info-popover :text="$role->description" color="slate" size="sm" />
                                 </div>
                                 <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700">
                                     {{ $role->members_count }} nhân sự
                                 </span>
                             </div>
-
-                            <p class="text-xs text-slate-600 mb-4 leading-relaxed">
-                                {{ $role->description }}
-                            </p>
 
                             <!-- Functional Groups Assigned to this Role -->
                             <div class="space-y-1.5 pt-3 border-t border-slate-100">

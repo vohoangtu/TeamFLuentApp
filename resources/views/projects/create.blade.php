@@ -14,9 +14,9 @@
             <div class="mb-6 pb-6 border-b border-slate-100">
                 <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full bg-gradient-to-r from-fuchsia-600 to-cyan-600"></span>
-                    Thông Tin Dự Án Mới
+                    <span>Thông Tin Dự Án Mới</span>
+                    <x-info-popover text="Thiết lập thông số ban đầu, tiến độ dự kiến và ngân sách cho dự án." color="blue" />
                 </h2>
-                <p class="text-xs text-slate-500 mt-1 font-medium">Thiết lập thông số ban đầu, tiến độ dự kiến và ngân sách cho dự án.</p>
             </div>
 
             @if($errors->any())

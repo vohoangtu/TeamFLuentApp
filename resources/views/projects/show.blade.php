@@ -83,16 +83,16 @@
                 <div>
                     <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                         <span class="w-3 h-3 rounded-full bg-indigo-600"></span>
-                        Đội Ngũ Nhân Sự Phụ Trách ({{ $project->members->count() }} thành viên)
+                        <span>Đội Ngũ Nhân Sự Phụ Trách ({{ $project->members->count() }} thành viên)</span>
+                        <x-info-popover text="Mỗi thành viên có thể phụ trách nhiều dự án cùng lúc với hạn mức công việc riêng." color="blue" size="sm" />
                     </h3>
-                    <p class="text-xs text-slate-500 font-medium">Mỗi thành viên có thể phụ trách nhiều dự án cùng lúc với hạn mức công việc riêng.</p>
                 </div>
 
                 <div class="space-y-4">
                     @forelse($project->members as $member)
                         <div class="mica-card rounded-2xl p-5 border border-slate-200/80 hover:border-indigo-400/50 hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div class="flex items-center gap-4">
-                                <img class="w-12 h-12 rounded-2xl object-cover ring-2 ring-white shadow-sm"
+                                <img class="w-12 h-12 rounded-2xl object-cover ring-2 ring-white dark:ring-[var(--bg-surface-solid)] shadow-sm"
                                      src="{{ $member->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode($member->name).'&background=6366f1&color=fff' }}"
                                      alt="{{ $member->name }}">
                                 <div>
@@ -148,9 +148,9 @@
                             <svg class="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
                             </svg>
-                            Bổ Nhiệm Nhân Sự Vào Dự Án
+                            <span>Bổ Nhiệm Nhân Sự Vào Dự Án</span>
+                            <x-info-popover text="Thêm thành viên phụ trách và xác lập vai trò trong dự án." color="cyan" size="sm" />
                         </h3>
-                        <p class="text-xs text-slate-500 font-medium">Thêm thành viên phụ trách và xác lập vai trò trong dự án</p>
                     </div>
 
                     @if($availableMembers->isNotEmpty())

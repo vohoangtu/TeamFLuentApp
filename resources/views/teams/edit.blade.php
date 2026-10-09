@@ -15,8 +15,8 @@
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                         <span>Chỉnh Sửa: {{ $team->name }}</span>
+                        <x-info-popover text="Cập nhật thông tin và đội trưởng của nhóm." color="emerald" />
                     </h2>
-                    <p class="text-xs text-slate-500 mt-1 font-medium">Cập nhật thông tin và đội trưởng của nhóm.</p>
                 </div>
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr {{ $team->color }} flex items-center justify-center font-mono font-black text-white text-xs shadow-md">
                     {{ $team->code }}

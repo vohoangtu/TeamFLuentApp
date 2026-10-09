@@ -15,8 +15,8 @@
                 <div>
                     <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                         <span>Chỉnh Sửa: {{ $project->name }}</span>
+                        <x-info-popover text="Cập nhật tiến độ, trạng thái và thời hạn dự án." color="blue" />
                     </h2>
-                    <p class="text-xs text-slate-500 mt-1 font-medium">Cập nhật tiến độ, trạng thái và thời hạn dự án.</p>
                 </div>
                 <span class="font-mono text-xs px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold">
                     {{ $project->code }}

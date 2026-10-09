@@ -9,16 +9,17 @@
 
             <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div class="max-w-2xl space-y-2">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-fuchsia-100 to-cyan-100 border border-fuchsia-200 text-xs font-bold text-fuchsia-800 shadow-sm">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mica-pill text-xs font-bold shadow-sm text-slate-800"
+                         x-data="{ currentTheme: window.ThemeManager ? window.ThemeManager.getCurrentTheme() : { name: 'Fluent 2 Mica Light', icon: '🎨' } }"
+                         x-init="window.addEventListener('theme-changed', (e) => currentTheme = e.detail.themeObj)">
                         <span class="w-2 h-2 rounded-full bg-cyan-500 animate-ping"></span>
-                        Microsoft Fluent 2 Mica Ultra-Colorful &bull; Light Edition
+                        <span x-text="currentTheme.icon + ' ' + currentTheme.name"></span>
+                        <span class="text-[10px] text-slate-500 font-medium">&bull; Active Design System</span>
                     </div>
-                    <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">
-                        Hệ thống điều phối <span class="text-gradient-fluent">Thành viên & Đa dự án</span>
+                    <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2 flex-wrap">
+                        <span>Hệ thống điều phối <span class="text-gradient-fluent">Thành viên & Đa dự án</span></span>
+                        <x-info-popover text="Theo dõi phân bổ nguồn lực thời gian thực. Mỗi thành viên được tối ưu hóa năng suất khi phụ trách nhiều dự án cùng lúc với vai trò và hạn mức công việc riêng biệt." color="cyan" />
                     </h2>
-                    <p class="text-sm text-slate-600 leading-relaxed font-medium">
-                        Theo dõi phân bổ nguồn lực thời gian thực. Mỗi thành viên được tối ưu hóa năng suất khi phụ trách nhiều dự án cùng lúc với vai trò và hạn mức công việc riêng biệt.
-                    </p>
                 </div>
 
                 <div class="flex items-center gap-3 shrink-0">
@@ -135,9 +136,9 @@
                     <div>
                         <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600"></span>
-                            Dự Án Trọng Điểm Đang Triển Khai
+                            <span>Dự Án Trọng Điểm Đang Triển Khai</span>
+                            <x-info-popover text="Danh sách các dự án ưu tiên cùng đội ngũ nhân sự phụ trách." color="blue" size="sm" />
                         </h3>
-                        <p class="text-xs text-slate-500 font-medium">Danh sách các dự án ưu tiên cùng đội ngũ nhân sự phụ trách</p>
                     </div>
                     <a href="{{ route('projects.index') }}" class="text-xs font-bold text-purple-700 hover:text-purple-800">Xem tất cả &rarr;</a>
                 </div>
@@ -188,14 +189,20 @@
                             <div class="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
                                 <div class="flex items-center gap-3">
                                     <span class="text-xs font-bold text-slate-600">Đội ngũ phụ trách ({{ $project->members->count() }}):</span>
-                                    <div class="flex -space-x-2 overflow-hidden">
+                                    <div class="flex -space-x-2 overflow-hidden items-center">
                                         @foreach($project->members->take(5) as $member)
                                             <a href="{{ route('members.show', $member) }}" title="{{ $member->name }} - {{ $member->pivot->role_in_project }} ({{ $member->pivot->allocation_percent }}%)" class="inline-block relative">
-                                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover shadow-sm"
+                                                <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-[var(--bg-surface-solid)] object-cover shadow-sm transition-transform hover:scale-110 hover:z-10"
                                                      src="{{ $member->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode($member->name).'&background=6366f1&color=fff' }}"
                                                      alt="{{ $member->name }}">
                                             </a>
                                         @endforeach
+                                        @if($project->members->count() > 5)
+                                            <span class="inline-flex items-center justify-center h-8 w-8 rounded-full ring-2 ring-white dark:ring-[var(--bg-surface-solid)] bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold shadow-sm"
+                                                  title="Và {{ $project->members->count() - 5 }} thành viên khác">
+                                                +{{ $project->members->count() - 5 }}
+                                            </span>
+                                        @endif
                                     </div>
                                 </div>
 
@@ -223,9 +230,9 @@
                     <div>
                         <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             <span class="w-2.5 h-2.5 rounded-full bg-cyan-600"></span>
-                            Nhân Sự Đa Dự Án
+                            <span>Nhân Sự Đa Dự Án</span>
+                            <x-info-popover text="Thành viên kiêm nhiệm nhiều dự án." color="cyan" size="sm" />
                         </h3>
-                        <p class="text-xs text-slate-500 font-medium">Thành viên kiêm nhiệm nhiều dự án</p>
                     </div>
                 </div>
 
@@ -235,11 +242,11 @@
                             <div class="flex items-center justify-between mb-2.5">
                                 <div class="flex items-center gap-3">
                                     <div class="relative">
-                                        <img class="w-10 h-10 rounded-xl object-cover ring-2 ring-slate-200 shadow-sm"
+                                        <img class="w-10 h-10 rounded-xl object-cover ring-2 ring-slate-200 dark:ring-[var(--bg-surface-solid)] shadow-sm"
                                              src="{{ $member->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode($member->name).'&background=6366f1&color=fff' }}"
                                              alt="{{ $member->name }}">
                                         @if($member->is_team_lead)
-                                            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-400 rounded-full border border-white flex items-center justify-center text-[8px] font-black text-slate-950" title="Team Lead">★</span>
+                                            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-400 rounded-full border border-white dark:border-[var(--bg-surface-solid)] flex items-center justify-center text-[8px] font-black text-slate-950" title="Team Lead">★</span>
                                         @endif
                                     </div>
                                     <div>
@@ -286,8 +293,10 @@
             <div class="mica-card rounded-2xl p-6 border border-white/80">
                 <div class="flex items-center justify-between mb-5">
                     <div>
-                        <h3 class="text-base font-bold text-slate-900">Phòng Ban & Nhóm Chức Năng</h3>
-                        <p class="text-xs text-slate-500 font-medium">Cơ cấu tổ chức doanh nghiệp</p>
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <span>Phòng Ban & Nhóm Chức Năng</span>
+                            <x-info-popover text="Cơ cấu tổ chức doanh nghiệp." color="emerald" size="sm" />
+                        </h3>
                     </div>
                     <a href="{{ route('teams.index') }}" class="text-xs font-bold text-emerald-700 hover:text-emerald-800">Quản lý nhóm &rarr;</a>
                 </div>
@@ -320,8 +329,10 @@
             <div class="mica-card rounded-2xl p-6 border border-white/80">
                 <div class="flex items-center justify-between mb-5">
                     <div>
-                        <h3 class="text-base font-bold text-slate-900">Vai Trò & Quyền Hạn (RBAC)</h3>
-                        <p class="text-xs text-slate-500 font-medium">Phân quyền bảo mật Fluent 2</p>
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <span>Vai Trò & Quyền Hạn (RBAC)</span>
+                            <x-info-popover text="Phân quyền bảo mật Fluent 2." color="slate" size="sm" />
+                        </h3>
                     </div>
                     <a href="{{ route('roles.index') }}" class="text-xs font-bold text-purple-700 hover:text-purple-800">Xem ma trận quyền &rarr;</a>
                 </div>

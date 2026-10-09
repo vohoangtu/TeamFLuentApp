@@ -20,12 +20,12 @@
 <div class="relative inline-block shrink-0">
     <img src="{{ $avatarUrl }}"
          alt="{{ $name }}"
-         {{ $attributes->merge(['class' => "{$sizeClasses} object-cover ring-2 ring-white shadow-sm"]) }}>
+         {{ $attributes->merge(['class' => "{$sizeClasses} object-cover ring-2 ring-white dark:ring-[var(--bg-surface-solid)] shadow-sm"]) }}>
 
     @if($isLead)
-        <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-400 rounded-full border border-white flex items-center justify-center text-[8px] font-black text-slate-950 shadow-sm"
+        <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-400 rounded-full border border-white dark:border-[var(--bg-surface-solid)] flex items-center justify-center text-[8px] font-black text-slate-950 shadow-sm"
               title="Team Lead">★</span>
     @elseif($dot)
-        <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white {{ $dot }}"></span>
+        <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dark:border-[var(--bg-surface-solid)] {{ $dot }}"></span>
     @endif
 </div>

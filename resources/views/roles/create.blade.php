@@ -52,10 +52,8 @@
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             <span class="w-3 h-3 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600"></span>
                             Thông Tin Vai Trò Chức Danh
+                            <x-info-popover text="Khai báo tên gọi, định danh và màu sắc nhận diện đặc trưng trong giao diện tổ chức." color="blue" />
                         </h2>
-                        <p class="text-xs text-slate-500 mt-1 font-medium">
-                            Khai báo tên gọi, định danh và màu sắc nhận diện đặc trưng trong giao diện tổ chức.
-                        </p>
                     </div>
                     <x-badge color="primary" size="md">Role Definition</x-badge>
                 </div>
@@ -136,10 +134,8 @@
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             <span class="w-3 h-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600"></span>
                             Gán Nhóm Quyền Chức Năng (Functional Permission Groups)
+                            <x-info-popover text="Chọn các gói quyền chức năng phù hợp (ví dụ: Nhóm Dev, Nhóm System, Nhóm Quản Trị) để vai trò tự động sở hữu toàn bộ các quyền liên quan." color="cyan" />
                         </h2>
-                        <p class="text-xs text-slate-500 mt-1 font-medium">
-                            Chọn các gói quyền chức năng phù hợp (ví dụ: Nhóm Dev, Nhóm System, Nhóm Quản Trị) để vai trò tự động sở hữu toàn bộ các quyền liên quan.
-                        </p>
                     </div>
                     <span class="text-xs font-bold text-cyan-600 bg-cyan-50 px-3 py-1 rounded-xl border border-cyan-200">
                         {{ $permissionGroups->count() }} nhóm chức năng
@@ -163,12 +159,12 @@
                                     <div class="flex items-center gap-2">
                                         <span class="text-lg">{{ $pGroup->icon }}</span>
                                         <span class="text-xs font-bold text-slate-900">{{ $pGroup->name }}</span>
+                                        <x-info-popover :text="$pGroup->description" color="cyan" size="sm" />
                                     </div>
                                     <x-badge :color="$pGroup->badge_color" size="sm">
                                         {{ count($pGroup->permissions ?? []) }} quyền
                                     </x-badge>
                                 </div>
-                                <p class="text-[11px] text-slate-500 leading-relaxed">{{ $pGroup->description }}</p>
                                 <div class="flex flex-wrap gap-1 pt-1">
                                     @foreach(array_slice($pGroup->permissions ?? [], 0, 4) as $pKey)
                                         <code class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">{{ $pKey }}</code>
@@ -190,10 +186,8 @@
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             <span class="w-3 h-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600"></span>
                             Thiết Lập Quyền Hạn Chi Tiết Theo Module (RBAC)
+                            <x-info-popover text="Chọn lọc từng hành động được phép thực thi. Các quyền đánh dấu [Quan trọng] cần đặc quyền cao." color="emerald" />
                         </h2>
-                        <p class="text-xs text-slate-500 mt-1 font-medium">
-                            Chọn lọc từng hành động được phép thực thi. Các quyền đánh dấu [Quan trọng] cần đặc quyền cao.
-                        </p>
                     </div>
 
                     <div class="flex items-center gap-2">

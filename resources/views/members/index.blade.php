@@ -12,8 +12,8 @@
                         <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-cyan-100 text-cyan-800 border border-cyan-300">
                             {{ $members->total() }} nhân sự
                         </span>
+                        <x-info-popover text="Một thành viên có thể phụ trách và đóng góp vào nhiều dự án khác nhau cùng lúc." color="cyan" />
                     </h2>
-                    <p class="text-xs text-slate-500 font-medium">Một thành viên có thể phụ trách và đóng góp vào nhiều dự án khác nhau cùng lúc.</p>
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -115,10 +115,10 @@
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex items-center gap-3">
                                 <div class="relative shrink-0">
-                                    <img class="w-12 h-12 rounded-2xl object-cover ring-2 ring-slate-200 shadow-md"
+                                    <img class="w-12 h-12 rounded-2xl object-cover ring-2 ring-slate-200 dark:ring-[var(--bg-surface-solid)] shadow-md"
                                          src="{{ $member->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode($member->name).'&background=6366f1&color=fff' }}"
                                          alt="{{ $member->name }}">
-                                    <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-white {{ $status['dot'] }}"></span>
+                                    <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-[var(--bg-surface-solid)] {{ $status['dot'] }}"></span>
                                 </div>
                                 <div>
                                     <div class="flex items-center gap-1.5 flex-wrap">

@@ -38,10 +38,8 @@
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             <span class="text-xl">{{ $group->icon }}</span>
                             Điều Chỉnh Thuộc Tính Nhóm: {{ $group->name }}
+                            <x-info-popover text="Khi bạn điều chỉnh danh sách quyền trong nhóm này, hệ thống sẽ tự động cập nhật phân quyền có hiệu lực cho tất cả vai trò đang gán nhóm." color="amber" />
                         </h2>
-                        <p class="text-xs text-slate-500 mt-1 font-medium">
-                            Khi bạn điều chỉnh danh sách quyền trong nhóm này, hệ thống sẽ tự động cập nhật phân quyền có hiệu lực cho tất cả vai trò đang gán nhóm.
-                        </p>
                     </div>
                     <div class="flex items-center gap-2">
                         @if($group->is_system)
@@ -137,10 +135,8 @@
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             <span class="w-3 h-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600"></span>
                             Tập Hợp Quyền Hạn Trong Nhóm Này
+                            <x-info-popover text="Tích chọn các quyền mà bất kỳ vai trò nào khi được gán nhóm này sẽ sở hữu." color="emerald" />
                         </h2>
-                        <p class="text-xs text-slate-500 mt-1 font-medium">
-                            Tích chọn các quyền mà bất kỳ vai trò nào khi được gán nhóm này sẽ sở hữu.
-                        </p>
                     </div>
 
                     <div class="flex items-center gap-2">
