@@ -46,7 +46,12 @@
                                 {{ $priority['label'] }}
                             </span>
                         </div>
-                        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ $project->name }}</h2>
+                        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                            <span>{{ $project->name }}</span>
+                            @if($project->description)
+                                <x-info-popover :text="$project->description" color="blue" />
+                            @endif
+                        </h2>
                     </div>
 
                     <div class="flex items-center gap-4 text-right">
@@ -60,8 +65,6 @@
                         </div>
                     </div>
                 </div>
-
-                <p class="text-sm text-slate-600 max-w-4xl leading-relaxed">{{ $project->description }}</p>
 
                 <!-- Big Progress Gauge -->
                 <div class="space-y-2">

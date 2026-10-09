@@ -36,13 +36,14 @@
                             </span>
                         </div>
 
-                        <a href="{{ route('teams.show', $team) }}" class="font-bold text-slate-900 text-lg hover:text-emerald-700 transition-colors block">
-                            {{ $team->name }}
-                        </a>
-
-                        <p class="text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">
-                            {{ $team->description }}
-                        </p>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('teams.show', $team) }}" class="font-bold text-slate-900 text-lg hover:text-emerald-700 transition-colors block">
+                                {{ $team->name }}
+                            </a>
+                            @if($team->description)
+                                <x-info-popover :text="$team->description" color="emerald" size="sm" />
+                            @endif
+                        </div>
 
                         <!-- Team Lead -->
                         <div class="mt-4 p-3 rounded-xl bg-amber-50/70 border border-amber-200/80 flex items-center gap-3">

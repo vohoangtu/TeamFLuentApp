@@ -153,10 +153,13 @@
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div>
                                     <div class="flex items-center gap-2.5 flex-wrap">
-                                        <span class="font-mono text-xs px-2.5 py-1 rounded-md bg-slate-100 border border-slate-200 text-slate-700 font-bold">{{ $project->code }}</span>
-                                        <a href="{{ route('projects.show', $project) }}" class="font-bold text-slate-900 text-base hover:text-purple-700 transition-colors">
+                                        <span class="font-mono text-xs px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold">{{ $project->code }}</span>
+                                        <a href="{{ route('projects.show', $project) }}" class="font-bold text-slate-900 dark:text-slate-100 text-base hover:text-purple-700 dark:hover:text-purple-400 transition-colors">
                                             {{ $project->name }}
                                         </a>
+                                        @if($project->description)
+                                            <x-info-popover :text="$project->description" color="blue" size="sm" />
+                                        @endif
                                         <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full border {{ $status['class'] }}">
                                             <span class="inline-block w-1.5 h-1.5 rounded-full mr-1 {{ $status['dot'] }}"></span>
                                             {{ $status['label'] }}
@@ -165,7 +168,6 @@
                                             {{ $priority['label'] }}
                                         </span>
                                     </div>
-                                    <p class="text-xs text-slate-600 mt-1.5 line-clamp-1 font-medium">{{ $project->description }}</p>
                                 </div>
 
                                 <div class="text-right shrink-0">
@@ -303,21 +305,26 @@
 
                 <div class="space-y-3">
                     @foreach($teams as $team)
-                        <div class="p-3.5 rounded-xl bg-slate-50/90 hover:bg-white border border-slate-200/80 flex items-center justify-between transition-all shadow-sm">
+                        <div class="p-3.5 rounded-xl bg-slate-50/90 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 flex items-center justify-between transition-all shadow-sm">
                             <div class="flex items-center gap-3">
                                 <div class="w-9 h-9 rounded-xl bg-gradient-to-tr {{ $team->color }} flex items-center justify-center font-mono font-bold text-white text-xs shadow-md">
                                     {{ $team->code }}
                                 </div>
                                 <div>
-                                    <a href="{{ route('teams.show', $team) }}" class="text-sm font-bold text-slate-900 hover:text-cyan-700 transition-colors">
-                                        {{ $team->name }}
-                                    </a>
-                                    <p class="text-xs text-slate-500 font-medium">
-                                        Trưởng nhóm: <span class="text-slate-800 font-bold">{{ $team->lead->name ?? 'Chưa chỉ định' }}</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <a href="{{ route('teams.show', $team) }}" class="text-sm font-bold text-slate-900 dark:text-slate-100 hover:text-cyan-700 dark:hover:text-cyan-400 transition-colors">
+                                            {{ $team->name }}
+                                        </a>
+                                        @if($team->description)
+                                            <x-info-popover :text="$team->description" color="emerald" size="sm" />
+                                        @endif
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                        Trưởng nhóm: <span class="text-slate-800 dark:text-slate-200 font-bold">{{ $team->lead->name ?? 'Chưa chỉ định' }}</span>
                                     </p>
                                 </div>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                 {{ $team->members_count }} nhân sự
                             </span>
                         </div>
@@ -339,14 +346,16 @@
 
                 <div class="space-y-3">
                     @foreach($roles as $role)
-                        <div class="p-3.5 rounded-xl bg-slate-50/90 hover:bg-white border border-slate-200/80 flex items-center justify-between transition-all shadow-sm">
-                            <div>
+                        <div class="p-3.5 rounded-xl bg-slate-50/90 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 flex items-center justify-between transition-all shadow-sm">
+                            <div class="flex items-center gap-2">
                                 <span class="text-xs font-bold px-2.5 py-1 rounded-lg {{ $role->badge_classes }}">
                                     {{ $role->name }}
                                 </span>
-                                <p class="text-xs text-slate-600 font-medium mt-1.5 line-clamp-1">{{ $role->description }}</p>
+                                @if($role->description)
+                                    <x-info-popover :text="$role->description" color="slate" size="sm" />
+                                @endif
                             </div>
-                            <span class="text-xs font-bold text-slate-700 px-2 py-1 rounded-md bg-slate-100 shrink-0 ml-2 border border-slate-200">
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300 px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 shrink-0 ml-2 border border-slate-200 dark:border-slate-700">
                                 {{ $role->members_count }} người
                             </span>
                         </div>

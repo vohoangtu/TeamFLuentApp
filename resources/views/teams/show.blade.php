@@ -32,8 +32,12 @@
                         {{ $team->code }}
                     </div>
                     <div>
-                        <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">{{ $team->name }}</h2>
-                        <p class="text-xs text-slate-600 max-w-xl mt-1 leading-relaxed">{{ $team->description }}</p>
+                        <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                            <span>{{ $team->name }}</span>
+                            @if($team->description)
+                                <x-info-popover :text="$team->description" color="emerald" size="sm" />
+                            @endif
+                        </h2>
                     </div>
                 </div>
 

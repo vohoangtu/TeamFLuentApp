@@ -124,11 +124,13 @@
                                         <a href="{{ route('projects.show', $project) }}" class="font-bold text-slate-900 text-base hover:text-indigo-600 transition-colors">
                                             {{ $project->name }}
                                         </a>
+                                        @if($project->description)
+                                            <x-info-popover :text="$project->description" color="blue" size="sm" />
+                                        @endif
                                         <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full border {{ $pStatus['class'] }}">
                                             {{ $pStatus['label'] }}
                                         </span>
                                     </div>
-                                    <p class="text-xs text-slate-500 mt-1 line-clamp-1">{{ $project->description }}</p>
                                 </div>
 
                                 <!-- Unassign Button Form -->
@@ -249,9 +251,11 @@
                 <div class="mica-card rounded-2xl p-6 border border-slate-200/80 space-y-3 shadow-sm">
                     <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
-                        Quyền Hạn Của Vai Trò ({{ $member->role->name }})
+                        <span>Quyền Hạn Của Vai Trò ({{ $member->role->name }})</span>
+                        @if($member->role->description)
+                            <x-info-popover :text="$member->role->description" color="slate" size="sm" />
+                        @endif
                     </h3>
-                    <p class="text-xs text-slate-500">{{ $member->role->description }}</p>
 
                     <div class="flex flex-wrap gap-1.5 pt-2">
                         @if($member->role->permissions)

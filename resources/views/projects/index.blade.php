@@ -98,13 +98,14 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('projects.show', $project) }}" class="font-bold text-slate-900 text-lg hover:text-indigo-600 transition-colors block">
-                            {{ $project->name }}
-                        </a>
-
-                        <p class="text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">
-                            {{ $project->description }}
-                        </p>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('projects.show', $project) }}" class="font-bold text-slate-900 text-lg hover:text-indigo-600 transition-colors block">
+                                {{ $project->name }}
+                            </a>
+                            @if($project->description)
+                                <x-info-popover :text="$project->description" color="blue" size="sm" />
+                            @endif
+                        </div>
 
                         <!-- Progress Bar with colorful gradient -->
                         <div class="mt-5 space-y-1.5">

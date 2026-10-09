@@ -163,9 +163,11 @@
                                                 <div class="flex items-center gap-2">
                                                     <span class="text-base">{{ $pGroup->icon }}</span>
                                                     <span class="font-bold text-slate-900 text-xs">{{ $pGroup->name }}</span>
+                                                    @if($pGroup->description)
+                                                        <x-info-popover :text="$pGroup->description" color="cyan" size="sm" />
+                                                    @endif
                                                     <x-badge :color="$pGroup->badge_color" size="sm">{{ count($pGroup->permissions ?? []) }} quyền</x-badge>
                                                 </div>
-                                                <p class="text-[11px] text-slate-500">{{ $pGroup->description }}</p>
                                                 <div class="flex flex-wrap gap-1">
                                                     @foreach(array_slice($pGroup->permissions ?? [], 0, 3) as $k)
                                                         <code class="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">{{ $k }}</code>
@@ -224,13 +226,15 @@
                                                 <div class="space-y-0.5">
                                                     <div class="flex items-center gap-2">
                                                         <span class="font-bold text-slate-800">{{ $perm['name'] }}</span>
+                                                        @if(!empty($perm['description']))
+                                                            <x-info-popover :text="$perm['description']" color="slate" size="sm" />
+                                                        @endif
                                                         @if(!empty($perm['critical']))
                                                             <span class="px-1.5 py-0.2 rounded text-[9px] font-black uppercase tracking-wider bg-rose-100 text-rose-700 border border-rose-300">
                                                                 Nguy hiểm
                                                             </span>
                                                         @endif
                                                     </div>
-                                                    <p class="text-[11px] text-slate-500">{{ $perm['description'] }}</p>
                                                     <code class="text-[10px] font-mono text-indigo-600 bg-indigo-50/80 px-1.5 py-0.5 rounded">{{ $permKey }}</code>
                                                 </div>
                                             </td>
